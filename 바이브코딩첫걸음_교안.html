@@ -1,0 +1,1536 @@
+<title>바이브코딩 첫걸음</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
+<style>
+/* Layout: Apple식 풀블리드 타일(흰 → 파치먼트 → 다크)이 번갈아 쌓이고, 각 타일 안에 980px 본문 / 1180px 실습 영역 */
+:root{
+  --canvas:#ffffff; --parchment:#f5f5f7; --pearl:#fafafc; --code:#f5f5f7;
+  --ink:#1d1d1f; --ink80:#333336; --ink48:#6e6e73; --hair:#e0e0e0; --soft:rgba(0,0,0,.08);
+  --link:#0066cc; --btn:#0066cc; --focus:#0071e3;
+  --tile:#272729; --tile2:#333336; --tile-ink:#ffffff; --tile-muted:#cccccc; --tile-link:#2997ff; --tile-hair:#424245;
+  --good:#1d7a46; --warn:#a85d00; --bad:#c42b1c;
+  --good-bg:rgba(29,122,70,.10); --warn-bg:rgba(168,93,0,.10); --bad-bg:rgba(196,43,28,.09);
+  --hl:rgba(0,102,204,.09); --frost:rgba(245,245,247,.82); --star:#f5a623;
+  --shadow:rgba(0,0,0,.22) 3px 5px 30px 0;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --canvas:#000000; --parchment:#161617; --pearl:#1d1d1f; --code:#1d1d1f;
+  --ink:#f5f5f7; --ink80:#d2d2d7; --ink48:#98989d; --hair:#38383a; --soft:rgba(255,255,255,.12);
+  --link:#2997ff; --btn:#0071e3; --focus:#2997ff;
+  --good:#30c76a; --warn:#ffa630; --bad:#ff5b4f;
+  --good-bg:rgba(48,199,106,.14); --warn-bg:rgba(255,166,48,.14); --bad-bg:rgba(255,91,79,.14);
+  --hl:rgba(41,151,255,.18); --frost:rgba(22,22,23,.82);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --canvas:#000000; --parchment:#161617; --pearl:#1d1d1f; --code:#1d1d1f;
+  --ink:#f5f5f7; --ink80:#d2d2d7; --ink48:#98989d; --hair:#38383a; --soft:rgba(255,255,255,.12);
+  --link:#2997ff; --btn:#0071e3; --focus:#2997ff;
+  --good:#30c76a; --warn:#ffa630; --bad:#ff5b4f;
+  --good-bg:rgba(48,199,106,.14); --warn-bg:rgba(255,166,48,.14); --bad-bg:rgba(255,91,79,.14);
+  --hl:rgba(41,151,255,.18); --frost:rgba(22,22,23,.82);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:110px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--canvas);color:var(--ink);font:400 17px/1.5 var(--font);letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--link)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* nav */
+.gnav{background:#000;color:#f5f5f7;height:44px;display:flex;align-items:center;padding-inline:22px;font-size:12px;letter-spacing:-0.01em}
+.gnav .in{max-width:1180px;margin:0 auto;width:100%;display:flex;justify-content:space-between;gap:16px}
+.gnav span:last-child{color:#a1a1a6}
+.snav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--frost);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--soft);padding-inline:22px}
+.snav .in{max-width:1180px;margin:0 auto;height:52px;display:flex;align-items:center;gap:20px}
+.snav .name{font-family:var(--display);font-size:19px;font-weight:600;white-space:nowrap}
+.snav nav{margin-left:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.snav nav::-webkit-scrollbar{display:none}
+.snav nav a{font-size:13px;color:var(--ink80);text-decoration:none;padding:6px 10px;border-radius:999px;white-space:nowrap}
+.snav nav a.on{background:var(--ink);color:var(--canvas)}
+@media (max-width:640px){.snav .name{display:none}.snav nav{margin-left:0}}
+
+/* tiles */
+.tile{padding-block:88px;padding-inline:22px}
+.tile.parch{background:var(--parchment)}
+.tile.dark{background:var(--tile);color:var(--tile-ink)}
+.wrap{max-width:980px;margin:0 auto}
+.wrap.wide{max-width:1180px}
+@media (max-width:640px){.tile{padding-block:56px;padding-inline:18px}}
+.eyebrow{font-size:14px;font-weight:600;color:var(--ink48);letter-spacing:.02em;margin-bottom:10px}
+.dark .eyebrow{color:#a1a1a6}
+h2{font-size:clamp(30px,4.6vw,44px);line-height:1.12;letter-spacing:-0.02em}
+.lead{font-size:clamp(19px,2.3vw,23px);font-weight:300;line-height:1.5;color:var(--ink80);margin-top:14px;max-width:44em}
+.dark .lead{color:var(--tile-muted)}
+.head{margin-bottom:44px}
+h3{font-size:21px;line-height:1.25;letter-spacing:-0.01em}
+.muted{color:var(--ink48)}
+.dark .muted{color:var(--tile-muted)}
+.small{font-size:14px;line-height:1.45}
+
+/* buttons */
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:11px 22px;border-radius:999px;border:0;background:var(--btn);color:#fff;font-size:17px;text-decoration:none;transition:transform .12s}
+.pill.ghost{background:transparent;color:var(--link);box-shadow:inset 0 0 0 1px var(--link)}
+.dark .pill.ghost{color:var(--tile-link);box-shadow:inset 0 0 0 1px var(--tile-link)}
+.pill:active,.ubtn:active,.chip:active,.node:active{transform:scale(.95)}
+.ubtn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 15px;border-radius:8px;border:0;background:var(--ink);color:var(--canvas);font-size:14px;transition:transform .12s}
+.dark .ubtn{background:#f5f5f7;color:#1d1d1f}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* grids & cards */
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px}
+.card{background:var(--canvas);border:1px solid var(--hair);border-radius:18px;padding:24px;min-width:0;overflow-wrap:anywhere}
+.tile:not(.parch):not(.dark) .card{background:var(--parchment);border-color:transparent}
+.dark .card{background:var(--tile2);border-color:transparent;color:var(--tile-ink)}
+.card h3{margin-bottom:8px}
+.card p{color:var(--ink80)}
+.dark .card p{color:var(--tile-muted)}
+.kicker{font-size:12px;font-weight:600;color:var(--ink48);letter-spacing:.04em;margin-bottom:12px;display:block}
+.dark .kicker{color:#a1a1a6}
+
+/* hero */
+.hero{padding-top:72px;padding-bottom:0;overflow:hidden}
+.hero h1{font-size:clamp(36px,6.4vw,64px);line-height:1.08;letter-spacing:-0.025em}
+.hero .lead{margin-inline:auto}
+.hero .center{text-align:center}
+.hero .row{justify-content:center;margin-top:28px}
+.stage{position:relative;max-width:760px;margin:56px auto 0;height:440px}
+.phone{position:absolute;left:50%;top:0;transform:translateX(-62%);width:270px;height:500px;border-radius:44px;background:#1d1d1f;padding:12px;box-shadow:var(--shadow)}
+.phone .scr{background:#fff;color:#1d1d1f;border-radius:34px;height:100%;padding:34px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.phone .ttl{font-size:13px;font-weight:600;color:#6e6e73;text-align:center}
+.phone .q{font-size:19px;font-weight:600;letter-spacing:-0.02em}
+.phone .stars{font-size:30px;color:#f5a623;letter-spacing:2px}
+.phone .stars i{color:#d2d2d7;font-style:normal}
+.phone .chips{display:flex;flex-wrap:wrap;gap:6px}
+.phone .chips b{font-weight:400;font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid #e0e0e0}
+.phone .chips b.on{box-shadow:inset 0 0 0 2px #0071e3;border-color:transparent}
+.phone .txt{background:#f5f5f7;border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.5;color:#333}
+.phone .go{margin-top:auto;background:#0066cc;color:#fff;border-radius:999px;text-align:center;padding:11px;font-size:14px}
+.agentcard{position:absolute;left:50%;top:120px;transform:translateX(18%);width:280px;background:var(--canvas);border:1px solid var(--hair);border-radius:18px;padding:18px;display:grid;gap:10px}
+.agentcard .lab{font-size:12px;color:var(--ink48);font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.b-good{color:var(--good);background:var(--good-bg)}
+.b-warn{color:var(--warn);background:var(--warn-bg)}
+.b-bad{color:var(--bad);background:var(--bad-bg)}
+.b-blue{color:var(--link);background:var(--hl)}
+.agentcard p{font-size:14px;line-height:1.55;color:var(--ink80)}
+@media (max-width:640px){
+  .stage{height:auto;display:grid;justify-items:center;gap:20px;margin-top:40px;padding-bottom:40px}
+  .phone,.agentcard{position:static;transform:none}
+  .phone{height:440px}
+}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:8px}
+.flow .st{position:relative;padding:22px 18px 0 0}
+.flow .st:before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--tile-hair)}
+.flow .st .dot{position:absolute;top:-6px;left:0;width:14px;height:14px;border-radius:50%;background:var(--tile-link)}
+.flow .st .k{font-size:13px;color:#a1a1a6;font-weight:600;margin-bottom:6px}
+.flow .st h3{font-size:21px;margin-bottom:6px}
+.flow .st p{color:var(--tile-muted);font-size:15px}
+.flow .runner{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:#fff;animation:run 5s linear infinite}
+@keyframes run{0%{left:0;opacity:0}6%{opacity:1}92%{opacity:1}100%{left:calc(100% - 10px);opacity:0}}
+@media (max-width:760px){.flow{grid-template-columns:1fr;gap:28px}.flow .runner{display:none}}
+.vs{margin-top:64px}
+.vs .card ul{margin:10px 0 0;padding-left:1.1em;color:var(--tile-muted)}
+.vs .card li{margin:6px 0}
+
+/* prompt boxes */
+.pbox{background:var(--code);border:1px solid var(--hair);border-radius:18px;overflow:hidden;min-width:0}
+.dark .pbox{background:#1d1d1f;border-color:var(--tile-hair)}
+.pbox .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--hair)}
+.dark .pbox .bar{border-color:var(--tile-hair)}
+.pbox .bar span{font-size:13px;font-weight:600;color:var(--ink48)}
+.dark .pbox .bar span{color:#a1a1a6}
+.pbox pre{margin:0;padding:18px;white-space:pre-wrap;word-break:break-word;font:400 15px/1.65 var(--font);color:var(--ink80);max-height:420px;overflow:auto}
+.dark .pbox pre{color:#e8e8ed}
+.pbox pre.tall{max-height:560px}
+mark{background:var(--hl);color:var(--link);border-radius:4px;padding:0 3px;font-weight:600}
+.dark mark{color:var(--tile-link)}
+
+/* chips & toggles */
+.chip{min-height:44px;padding:10px 18px;border-radius:999px;border:1px solid var(--hair);background:var(--canvas);font-size:15px;transition:transform .12s}
+.chip[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent;font-weight:600}
+.dark .chip{background:var(--tile2);border-color:var(--tile-hair);color:var(--tile-ink)}
+.seg{display:inline-flex;background:var(--parchment);border-radius:999px;padding:4px;gap:4px;flex-wrap:wrap}
+.tile.parch .seg{background:var(--canvas)}
+.seg button{border:0;background:transparent;border-radius:999px;padding:9px 18px;font-size:15px;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--canvas)}
+
+/* compare mocks */
+.mock{background:var(--canvas);border:1px solid var(--hair);border-radius:18px;padding:22px;display:grid;gap:12px;min-height:250px;align-content:start}
+.mock .field{height:38px;border-radius:10px;background:var(--parchment)}
+.mock .field.tallf{height:70px}
+.mock .lbl{font-size:13px;color:var(--ink48);font-weight:600}
+.mock .mstars{font-size:26px;color:var(--star);letter-spacing:2px}
+.mock .mbtn{height:42px;border-radius:999px;background:var(--btn)}
+.mock .mbtn.grey{background:var(--hair)}
+.mock .mchips{display:flex;gap:6px;flex-wrap:wrap}
+.mock .mchips i{height:28px;width:70px;border-radius:999px;border:1px solid var(--hair)}
+.mock .mchips i:first-child{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent}
+
+/* star demo */
+.demo{background:var(--canvas);border-radius:18px;padding:32px 24px;text-align:center;display:grid;gap:14px;justify-items:center;border:1px solid var(--hair)}
+.starbtns{display:flex;gap:6px}
+.starbtns button{border:0;background:none;font-size:46px;line-height:1;color:var(--hair);padding:4px;min-width:52px;min-height:52px;transition:transform .12s}
+.starbtns button.on{color:var(--star)}
+.starbtns button:active{transform:scale(.9)}
+.demo .msg{font-size:21px;font-weight:600;min-height:1.4em}
+
+/* builder */
+.builder{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start}
+@media (max-width:900px){.builder{grid-template-columns:1fr}}
+.form{display:grid;gap:22px}
+.form label.t{display:block;font-size:15px;font-weight:600;margin-bottom:8px}
+.form .hint{font-size:13px;color:var(--ink48);margin-top:6px}
+.inp{width:100%;min-height:48px;border:1px solid var(--hair);border-radius:12px;background:var(--canvas);color:var(--ink);font:400 17px/1.4 var(--font);padding:11px 14px}
+textarea.inp{min-height:96px;resize:vertical}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:44px;height:44px;border-radius:50%;border:0;position:relative}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--canvas),0 0 0 5px var(--focus)}
+
+/* steps */
+.steps{display:grid;gap:16px;counter-reset:s}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;align-items:start}
+.step .n{width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--canvas);display:grid;place-items:center;font-weight:600;font-size:15px}
+.dark .step .n{background:#f5f5f7;color:#1d1d1f}
+.step h3{font-size:19px;margin:5px 0 4px}
+.step p{color:var(--ink80)}
+.dark .step p{color:var(--tile-muted)}
+
+/* fix */
+.fix{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:24px;align-items:start}
+@media (max-width:860px){.fix{grid-template-columns:1fr}}
+.symptoms{display:grid;gap:8px}
+.symptoms button{text-align:left;border:1px solid var(--hair);background:var(--canvas);border-radius:14px;padding:14px 16px;font-size:16px;min-height:52px}
+.symptoms button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent;font-weight:600}
+.tipnote{background:var(--canvas);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:15px;color:var(--ink80)}
+
+/* checklist */
+.checks{display:grid;gap:10px;margin-top:8px}
+.checks label{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:var(--parchment);cursor:pointer}
+.tile.parch .checks label{background:var(--canvas)}
+.dark .checks label{background:var(--tile2)}
+.checks input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--btn);flex:none}
+.checks .done{color:var(--ink48);text-decoration:line-through}
+.dark .checks .done{color:#8e8e93}
+.checkhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:48px}
+.checkhead h3{font-size:19px}
+
+/* tables */
+.tbl{overflow:auto;max-height:460px;border:1px solid var(--hair);border-radius:14px;background:var(--canvas)}
+.dark .tbl{border-color:var(--tile-hair);background:#1d1d1f}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--hair);vertical-align:top}
+.dark th,.dark td{border-color:var(--tile-hair)}
+th{position:sticky;top:0;background:var(--parchment);font-weight:600;font-size:13px;white-space:nowrap;z-index:1}
+.dark th{background:#2a2a2c;color:#f5f5f7}
+td.rv{min-width:240px;max-width:380px}
+td.new,th.new{background:var(--hl)}
+tr.gone td{color:var(--ink48);text-decoration:line-through;background:var(--bad-bg)}
+.stars-s{color:var(--star);letter-spacing:1px;white-space:nowrap}
+
+/* simulator */
+.nodes{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:thin}
+.node{flex:0 0 auto;width:150px;text-align:left;border:1px solid var(--hair);background:var(--canvas);border-radius:16px;padding:14px;display:grid;gap:4px;position:relative;transition:transform .12s}
+.node[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent}
+.node .nn{font-size:12px;font-weight:600;color:var(--ink48)}
+.node .nt{font-size:15px;font-weight:600;line-height:1.3}
+.node .ng{font-size:12px;color:var(--link)}
+.node.opt{border-style:dashed}
+.simgrid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:24px;align-items:start;margin-top:10px}
+@media (max-width:900px){.simgrid{grid-template-columns:1fr}}
+.kv{display:grid;gap:8px;margin-top:14px}
+.kv div{display:flex;justify-content:space-between;gap:12px;font-size:14px;border-top:1px solid var(--hair);padding-top:8px}
+.kv dt,.kv span:first-child{color:var(--ink48)}
+.kv span:last-child{font-weight:600;text-align:right}
+.note{margin-top:12px;font-size:14px;padding:10px 14px;border-radius:12px;background:var(--hl);color:var(--ink80)}
+.outcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;max-height:520px;overflow:auto;padding:2px}
+.oc{background:var(--canvas);border:1px solid var(--hair);border-radius:16px;padding:16px;display:grid;gap:8px;align-content:start}
+.oc .top{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.oc .rv{font-size:13px;color:var(--ink48);line-height:1.45}
+.oc .rp{font-size:15px;line-height:1.55}
+.mail{background:var(--canvas);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.mail .mh{padding:16px 18px;border-bottom:1px solid var(--hair);display:grid;gap:4px;font-size:14px}
+.mail .mh b{font-weight:600}
+.mail .mb{padding:18px;display:grid;gap:14px;max-height:440px;overflow:auto;font-size:15px}
+.mail .mb p{border-left:3px solid var(--hair);padding-left:12px;color:var(--ink80)}
+
+/* assemble */
+.asm{display:grid;gap:18px}
+.asm .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px}
+@media (max-width:860px){.asm .card{grid-template-columns:1fr}}
+.asm .tagline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.asm .sn{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--canvas);display:grid;place-items:center;font-size:14px;font-weight:600}
+.setlist{display:grid;gap:8px;margin-top:12px}
+.setlist div{display:flex;justify-content:space-between;gap:16px;font-size:15px;padding:10px 14px;background:var(--canvas);border-radius:10px}
+.setlist span:first-child{color:var(--ink48)}
+.setlist span:last-child{font-weight:600;text-align:right;word-break:break-all}
+
+/* summary */
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:800px){.sum{grid-template-columns:1fr}}
+.sum .card .big{font-family:var(--display);font-size:28px;font-weight:600;letter-spacing:-0.02em;margin-bottom:8px}
+.warnlist{margin-top:40px;display:grid;gap:10px}
+.warnlist div{display:flex;gap:12px;align-items:baseline;color:var(--tile-muted)}
+.warnlist b{color:var(--tile-ink);font-weight:600;white-space:nowrap}
+
+footer{background:var(--parchment);padding:40px 22px 56px;font-size:12px;color:var(--ink48)}
+footer .in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--hair);padding-top:18px}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:rgba(29,29,31,.94);color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.sp{height:28px}
+
+/* playground & gallery */
+.pg-mock{background:var(--canvas);border:1px solid var(--hair);border-radius:18px;padding:24px;display:grid;gap:14px;justify-items:start;min-height:260px;align-content:start}
+.pg-mock .part{cursor:pointer;border-radius:10px;padding:4px 8px;margin:-4px -8px;outline:1px dashed transparent}
+.pg-mock .part:hover,.pg-mock .part:focus-visible{outline-color:var(--focus)}
+.pg-title{font-family:var(--display);font-weight:600;letter-spacing:-0.02em;transition:font-size .2s}
+.pg-btn{border:0;color:#fff;background:var(--btn);border-radius:999px;padding:11px 22px;transition:font-size .2s,transform .12s}
+.pg-btn:active{transform:scale(.95)}
+.pg-msg{min-height:1.5em;font-weight:600;color:var(--good)}
+.pg-note{margin-top:14px;font-size:15px;padding:12px 16px;border-radius:12px;background:var(--hl);color:var(--ink80);min-height:48px}
+.chips-col{display:grid;gap:10px;align-content:start}
+.chips-col .chip{text-align:left;border-radius:14px}
+.gal{background:var(--canvas);border:1px solid var(--hair);border-radius:18px;padding:28px 24px;display:grid;gap:16px;justify-items:center;text-align:center;align-content:start;min-height:300px}
+.roll{font-family:var(--display);font-size:30px;font-weight:600;min-height:1.4em;letter-spacing:-0.02em}
+.stampgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:min(100%,320px)}
+.stampgrid i{aspect-ratio:1;border-radius:50%;border:2px dashed var(--hair);display:grid;place-items:center;font-style:normal;font-size:22px;color:var(--good)}
+.stampgrid i.on{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.sign{font-family:var(--display);font-size:34px;font-weight:600;padding:12px 28px;border-radius:999px;background:var(--parchment);color:var(--ink48)}
+.sign.open{background:var(--good-bg);color:var(--good)}
+.gal input[type=range]{width:min(100%,320px);accent-color:var(--btn);min-height:32px}
+.qrow{display:flex;align-items:center;justify-content:space-between;gap:14px;width:min(100%,360px);text-align:left}
+.qrow .qty{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.qrow .qty button{width:40px;height:40px;border-radius:50%;border:1px solid var(--hair);background:var(--canvas);font-size:20px;line-height:1}
+.qtotal{font-family:var(--display);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---- 입문 교안 추가 컴포넌트 ---- */
+:root{--hl-dk:rgba(41,151,255,.16);--win-bar:#e8e8ed;--photo-bg:#e8e8ed}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--win-bar:#2c2c2e;--photo-bg:#2c2c2e}}
+:root[data-theme="dark"]{--win-bar:#2c2c2e;--photo-bg:#2c2c2e}
+
+.mt{margin-top:96px}
+.mt-s{margin-top:32px}
+.mt-xs{margin-top:16px}
+.subh{font-size:24px;margin:64px 0 20px;letter-spacing:-0.015em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pill.sm{min-height:36px;padding:7px 16px;font-size:14px}
+.seg{margin-bottom:20px}
+
+/* hero stage */
+.hstage{max-width:980px;margin:56px auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:20px;align-items:center;padding-bottom:88px}
+.win{background:var(--canvas);border:1px solid var(--hair);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.wbar{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;background:var(--win-bar)}
+.wbar i{width:10px;height:10px;border-radius:50%;background:var(--hair)}
+.wbar span{margin-left:10px;font-size:12px;font-weight:600;color:var(--ink48)}
+.wbody{padding:20px;display:grid;gap:12px;min-height:250px;align-content:start}
+.bub{padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.5;max-width:88%}
+.bub.me{justify-self:end;background:var(--btn);color:#fff;border-bottom-right-radius:6px}
+.bub.ai{background:var(--parchment);color:var(--ink);border-bottom-left-radius:6px}
+.bub.wide{max-width:100%}
+.caret{display:inline-block;width:2px;height:1em;background:var(--ink48);margin-left:3px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.harrow{font-size:30px;color:var(--ink48)}
+.calc .ct{font-family:var(--display);font-size:19px;font-weight:600}
+.crow{display:flex;justify-content:space-between;font-size:14px;padding-bottom:8px;border-bottom:1px solid var(--hair);font-variant-numeric:tabular-nums}
+.crow span:first-child{color:var(--ink48)}
+.cbar{display:flex;height:10px;border-radius:999px;overflow:hidden;gap:2px}
+.cbar i:nth-child(1){background:var(--btn)}
+.cbar i:nth-child(2){background:var(--star)}
+.cbar i:nth-child(3){background:var(--good)}
+.cbar.big{height:16px}
+.ctot{display:flex;justify-content:space-between;align-items:baseline}
+.ctot span{color:var(--ink48);font-size:14px}
+.ctot strong{font-family:var(--display);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:760px){.hstage{grid-template-columns:1fr;padding-bottom:56px}.harrow{transform:rotate(90deg);justify-self:center}}
+
+/* instructor */
+.prof{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:48px;align-items:start}
+.photo{margin:0;border-radius:18px;overflow:hidden;background:var(--photo-bg);aspect-ratio:413/531;max-width:100%}
+.photo img{display:block;width:100%;height:100%;object-fit:cover}
+.pname{font-family:var(--display);font-size:40px;font-weight:600;letter-spacing:-0.02em;line-height:1.1}
+.pname span{font-size:19px;font-weight:400;color:var(--ink48);margin-left:8px;letter-spacing:0}
+.pschool{margin-top:10px;color:var(--ink80)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 28px}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.hist li{padding:14px 0;border-top:1px solid var(--hair);color:var(--ink80)}
+.hist li:last-child{border-bottom:1px solid var(--hair)}
+@media (max-width:760px){.prof{grid-template-columns:1fr;gap:28px}.photo{width:min(100%,260px)}}
+
+/* path */
+.badge.here{color:#fff;background:var(--btn);margin-left:6px;font-size:11px;padding:2px 8px}
+.trackn{margin-top:28px;color:var(--tile-muted)}
+.goals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.goals .card h3{font-size:19px}
+@media (max-width:900px){.goals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.goals{grid-template-columns:1fr}}
+.dark .subh{color:var(--tile-ink)}
+
+/* agent */
+.ademo{background:var(--parchment);border-radius:18px;padding:28px;display:grid;gap:4px}
+.req p{font-family:var(--display);font-size:22px;font-weight:600;letter-spacing:-0.015em;margin-bottom:20px}
+.ademo .seg{background:var(--canvas)}
+.apanel{display:grid;gap:14px}
+.ademo .bub.ai{background:var(--canvas)}
+.loop{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.loop li{display:grid;grid-template-columns:140px minmax(0,1fr);gap:14px;padding:14px 16px;border-radius:14px;background:var(--canvas);border:1px solid var(--hair);opacity:.38;transition:opacity .3s}
+.loop li.on{opacity:1}
+.loop li.cur{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent}
+.loop li b{font-weight:600}
+@media (max-width:560px){.loop li{grid-template-columns:1fr;gap:4px}}
+.cmp{display:grid;grid-template-columns:minmax(90px,.6fr) minmax(0,1fr) minmax(0,1fr);margin-top:40px;border-top:1px solid var(--hair)}
+.cmp>div{padding:14px 12px;border-bottom:1px solid var(--hair);font-size:16px;color:var(--ink80);min-width:0}
+.cmp .ch{font-weight:600;color:var(--ink);font-size:14px}
+.cmp .cl{color:var(--ink48);font-size:14px;font-weight:600}
+.cmp .ch:nth-child(1){color:var(--ink48)}
+@media (max-width:560px){.cmp>div{padding:12px 6px;font-size:14px}}
+
+/* vibe */
+.card.pick{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent}
+.tile.parch .card .setlist div{background:var(--parchment)}
+.sortgame{background:var(--canvas);border-radius:18px;padding:24px;border:1px solid var(--hair)}
+.sghead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.sglist{display:grid;gap:0}
+.sgi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:14px 0;border-top:1px solid var(--hair)}
+.sgi .tx{font-size:17px;font-weight:600}
+.sgi .bt{display:flex;gap:8px}
+.sgi .bt button{min-height:40px;min-width:64px;padding:8px 16px;border-radius:999px;border:1px solid var(--hair);background:var(--canvas);font-size:15px;transition:transform .12s}
+.sgi .bt button:active{transform:scale(.95)}
+.sgi .bt button[aria-pressed="true"]{background:var(--ink);color:var(--canvas);border-color:var(--ink)}
+.sgi .fb{grid-column:1/-1;font-size:14px;color:var(--ink80);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.sgi .fb:empty{display:none}
+.cmp.four .ch:nth-child(1){color:var(--ink48)}
+
+/* expect */
+.kvlist{display:grid;gap:0;margin-top:4px}
+.kvlist div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--tile-hair)}
+.kvlist b{font-weight:600}
+.kvlist span{color:var(--tile-muted)}
+.quiz{margin-top:56px}
+.qlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:18px}
+.qi{background:var(--tile2);border-radius:18px;padding:20px;display:grid;gap:12px;align-content:start}
+.qi .tx{font-size:17px;font-weight:600;line-height:1.4}
+.qi .bt{display:flex;gap:8px;flex-wrap:wrap}
+.qi .bt button{min-height:40px;padding:8px 16px;border-radius:999px;border:1px solid var(--tile-hair);background:transparent;color:var(--tile-ink);font-size:14px;transition:transform .12s}
+.qi .bt button:active{transform:scale(.95)}
+.qi .bt button[aria-pressed="true"]{background:#f5f5f7;color:#1d1d1f;border-color:#f5f5f7}
+.qi .fb{font-size:14px;color:var(--tile-muted);display:grid;gap:6px;justify-items:start}
+.qi .fb:empty{display:none}
+
+/* errc */
+.errc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:760px){.errc{grid-template-columns:1fr}}
+.errc .card{display:grid;gap:14px;align-content:start}
+.el{display:flex;gap:14px;align-items:flex-start}
+.lt{flex:none;width:40px;height:40px;border-radius:10px;background:var(--ink);color:var(--canvas);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:19px}
+.el h3{font-size:19px;margin:0}
+.ex{font-size:15px;color:var(--ink80);background:var(--canvas);border-radius:12px;padding:12px 14px;min-height:3.2em}
+.ex b{color:var(--link);font-weight:600}
+.errc textarea.inp{min-height:76px}
+
+/* web playground */
+.webplay{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:24px;align-items:start}
+@media (max-width:860px){.webplay{grid-template-columns:1fr}}
+.shopcard{background:var(--canvas);border-radius:18px;padding:32px 28px;display:grid;gap:10px;justify-items:start;min-height:320px;align-content:start;transition:background .2s}
+.sc-eyebrow{font-size:13px;font-weight:600;color:var(--ink48);letter-spacing:.02em}
+.sc-title{font-family:var(--display);font-size:38px;font-weight:600;letter-spacing:-0.025em}
+.sc-desc{color:var(--ink80)}
+.sc-stamps{display:grid;grid-template-columns:repeat(5,28px);gap:8px;margin:8px 0}
+.sc-stamps i{width:28px;height:28px;border-radius:50%;border:2px dashed var(--hair);font-size:0;font-style:normal}
+.sc-stamps i.on{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.sc-btn{border:0;background:var(--btn);color:#fff;border-radius:999px;padding:11px 22px;min-height:44px;font-size:17px;transition:transform .12s}
+.sc-btn:active{transform:scale(.95)}
+.sc-msg{min-height:1.5em;font-weight:600;color:var(--good)}
+/* HTML만 켠 상태: 브라우저 기본 모양 */
+.shopcard.raw{background:#ffffff;color:#000000;border-radius:0;padding:12px;gap:0;outline:1px dashed var(--ink48);outline-offset:-1px;color-scheme:light;justify-items:stretch;display:block}
+.shopcard.raw *{all:revert}
+.shopcard.raw .sc-stamps{display:block;margin:8px 0}
+.shopcard.raw .sc-stamps i{font-size:16px}
+.pbox.code pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6}
+.pbox.code pre .c{color:var(--ink48)}
+
+/* data flow */
+.stations{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding-top:28px}
+.track{position:absolute;top:8px;left:12.5%;right:12.5%;height:2px;background:var(--tile-hair)}
+.tok{position:absolute;top:-7px;left:0;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--tile-link);transition:left .7s ease;opacity:0}
+.tok.go{opacity:1}
+.sta{background:var(--tile2);border-radius:18px;padding:20px;display:grid;gap:4px;transition:box-shadow .2s}
+.sta h3{font-size:19px}
+.sta p{color:var(--tile-muted);font-size:15px}
+.sta.cur{box-shadow:inset 0 0 0 2px var(--tile-link)}
+.flowcap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:24px;padding:18px 20px;border-radius:18px;background:var(--tile2)}
+.flowcap p{font-size:19px;font-weight:600;min-width:0;flex:1 1 300px}
+.note.dk{background:var(--hl-dk);color:var(--tile-muted)}
+@media (max-width:760px){.stations{grid-template-columns:repeat(2,minmax(0,1fr))}.track{display:none}}
+
+/* tools */
+.indep{margin-top:32px;padding-top:24px;border-top:1px solid var(--hair)}
+.tagc{display:inline-flex;gap:8px;align-items:baseline;padding:8px 16px;border-radius:999px;border:1px solid var(--hair);font-weight:600;font-size:15px}
+.tagc i{font-style:normal;font-weight:400;color:var(--ink48);font-size:13px}
+
+/* level */
+.ladder{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:24px;align-items:start}
+@media (max-width:860px){.ladder{grid-template-columns:1fr}}
+.lsteps{display:grid;gap:8px}
+.lsteps button{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:1px solid var(--hair);background:var(--canvas);border-radius:14px;padding:14px 18px;min-height:56px;font-size:16px;transition:transform .12s}
+.lsteps button:active{transform:scale(.98)}
+.lsteps button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--focus);border-color:transparent}
+.lsteps button b{font-weight:600;white-space:nowrap}
+.lsteps button span.nm{flex:1;color:var(--ink80)}
+.ldetail h3{font-size:24px;margin-bottom:16px}
+.reqs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.reqs .off{color:var(--ink48);background:var(--parchment);text-decoration:line-through}
+
+/* steps in a row */
+.steps.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.steps.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.steps.four{grid-template-columns:1fr}}
+.chips-col .chip b{font-weight:600}
+
+/* travel calc demo */
+.tcalc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;background:var(--canvas);border-radius:18px;padding:28px}
+@media (max-width:760px){.tcalc{grid-template-columns:1fr}}
+.tcgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tcres{display:grid;gap:14px;align-content:start}
+.tcres>div:not(.tcbar):not(.legend){display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid var(--hair);padding-bottom:12px}
+.tcres strong{font-family:var(--display);font-size:30px;font-weight:600;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.tcbar{display:flex;height:18px;border-radius:999px;overflow:hidden;gap:2px;background:var(--parchment)}
+.tcbar i{transition:width .3s}
+.tcbar i:nth-child(1){background:var(--btn)}
+.tcbar i:nth-child(2){background:var(--star)}
+.tcbar i:nth-child(3){background:var(--good)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--ink80);font-variant-numeric:tabular-nums}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--c)}
+
+/* fix phrases */
+.phr .kicker{margin:0 8px 0 0}
+
+/* lab2 */
+.l2right{display:grid;gap:24px;min-width:0}
+.phone2{width:min(100%,280px);justify-self:center;border-radius:44px;background:#1d1d1f;padding:12px;box-shadow:var(--shadow)}
+.phone2 .scr{background:#fff;color:#1d1d1f;border-radius:34px;min-height:440px;padding:34px 18px 18px;display:flex;flex-direction:column;gap:12px}
+.phone2 .ttl{font-size:13px;font-weight:600;color:#6e6e73;text-align:center}
+.phone2 .q{font-size:19px;font-weight:600;letter-spacing:-0.02em;line-height:1.3}
+.pvmenu{display:grid;gap:8px}
+.pvmenu div{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:10px 12px;border-radius:12px;background:#f5f5f7;font-variant-numeric:tabular-nums}
+.pvmenu div span:last-child{color:#6e6e73;white-space:nowrap}
+.phone2 .go{margin-top:auto;background:#0066cc;color:#fff;border-radius:999px;text-align:center;padding:11px;font-size:14px}
+
+/* apply */
+.apgrid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:24px;align-items:start}
+@media (max-width:860px){.apgrid{grid-template-columns:1fr}}
+.tile.parch .symptoms button{background:var(--canvas)}
+/* 폼 선택 버튼 정렬 */
+.form .t{display:block;margin-bottom:10px}
+.form .seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;border-radius:26px;box-sizing:border-box}
+.form .seg button{padding:9px 8px;text-align:center;line-height:1.3;white-space:nowrap}
+.form .seg:has(button:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+.form .seg:has(button:nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr))}
+.form .seg[data-seg="l2biz"]{grid-template-columns:repeat(6,minmax(0,1fr))}
+.form .seg[data-seg="l2biz"] button{grid-column:span 2}
+.form .seg[data-seg="l2biz"] button:nth-child(n+4){grid-column:span 3}
+@media(max-width:560px){
+  .form .seg:has(button:nth-child(3):last-child){grid-template-columns:minmax(0,1fr)}
+  .form .seg:has(button:nth-child(4):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* 강의 이미지 */
+.shot{margin:0 auto 44px;max-width:880px}
+.shot img{display:block;width:100%;height:auto;border-radius:18px;background:var(--parchment)}
+.shot.hero-shot{margin:44px auto 0;max-width:820px}
+.head+.shot{margin-top:-8px}
+
+</style>
+<div class="gnav"><div class="in"><span>AlgorithmLABS · 소상공인을 위한 AI 업무자동화 교육과정</span><span>AI Agent 활용 입문</span></div></div>
+<header class="snav"><div class="in">
+  <div class="name">바이브코딩 첫걸음</div>
+  <nav id="snav" aria-label="교안 목차">
+    <a href="#intro">시작</a>
+    <a href="#instructor">강사 소개</a>
+    <a href="#agent">AI 에이전트</a>
+    <a href="#vibe">바이브코딩</a>
+    <a href="#web">웹의 기초</a>
+    <a href="#prompt">프롬프트</a>
+    <a href="#lab1">실습 1</a>
+    <a href="#fix">고치기</a>
+    <a href="#lab2">실습 2</a>
+    <a href="#share">발표</a>
+    <a href="#close">마무리</a>
+  </nav>
+</div></header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="tile hero" id="intro">
+  <div class="wrap center">
+    <p class="eyebrow">AI Agent 활용 입문 · 바이브코딩 체험</p>
+    <h1>일상 언어로 설명하여<br>AI에게 일 시키기</h1>
+    <p class="lead">설명하는 방식을 이해하고, 간단한 웹앱을 직접 만들어봅니다.</p>
+    <div class="row"><a class="pill" href="#instructor">시작하기</a><a class="pill ghost" href="#lab1">실습 바로 가기</a></div>
+  </div>
+<figure class="shot hero-shot"><img src="images/01.webp" alt="작은 카페 카운터에서 사장님이 노트북에 말하자 웹앱 화면들이 공중에서 조립되고, 로봇 조수가 돕는 모습" width="1536" height="1024" decoding="async"></figure>
+  <div class="hstage" aria-label="프롬프트가 웹앱이 되는 예시">
+    <div class="win">
+      <div class="wbar"><i></i><i></i><i></i><span>AI와 대화</span></div>
+      <div class="wbody chat">
+        <div class="bub me">여행 경비 계산기를 만들어 줘. 인원수, 항공료, 숙박비, 식비를 넣으면 총 경비와 1인당 금액을 보여 줘.</div>
+        <div class="bub ai">좋아요, 바로 만들었어요. 오른쪽 미리보기 화면에서 숫자를 바꿔 보세요.<span class="caret" aria-hidden="true"></span></div>
+      </div>
+    </div>
+    <div class="harrow" aria-hidden="true">→</div>
+    <div class="win">
+      <div class="wbar"><i></i><i></i><i></i><span>미리보기</span></div>
+      <div class="wbody calc">
+        <b class="ct">여행 경비 계산기</b>
+        <div class="crow"><span>인원</span><span>4명</span></div>
+        <div class="crow"><span>항공료</span><span>1,200,000원</span></div>
+        <div class="crow"><span>숙박비</span><span>800,000원</span></div>
+        <div class="crow"><span>식비</span><span>600,000원</span></div>
+        <div class="cbar"><i style="width:46%"></i><i style="width:31%"></i><i style="width:23%"></i></div>
+        <div class="ctot"><span>1인당</span><strong>650,000원</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTRUCTOR ============ -->
+<section class="tile parch" id="instructor">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">강사 소개</p>
+      <h2>함께할 강사를<br>소개합니다.</h2>
+    </div>
+    <div class="prof">
+      <figure class="photo"><img src="data:image/jpeg;base64,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" alt="김현수 강사 사진" width="413" height="531"></figure>
+      <div class="ptext">
+        <p class="pname">김현수 <span>알고리즘랩스</span></p>
+        <p class="pschool">아주대학교 · 소프트웨어 및 컴퓨터공학 전공</p>
+        <div class="tags">
+          <span class="badge b-blue">AI 에이전트 빌드</span>
+          <span class="badge b-blue">AI 워크플로우 설계</span>
+          <span class="badge b-blue">데이터분석</span>
+          <span class="badge b-blue">바이브 코딩</span>
+        </div>
+        <div class="seg" role="group" aria-label="이력 분류" data-seg="hist">
+          <button type="button" aria-pressed="true" data-v="biz">기업 교육</button>
+          <button type="button" aria-pressed="false" data-v="edu">학교·기관 교육</button>
+          <button type="button" aria-pressed="false" data-v="lab">연구·프로젝트</button>
+        </div>
+        <ul class="hist" data-panel="hist" data-v="biz">
+          <li>DBR 공개교육 AI 에이전트 마스터클래스 출강</li>
+          <li>롯데웰푸드 키맨(Key-man) 교육 데이터분석 교육과정 facilitator</li>
+          <li>한국수력원자력 임직원 대상 AI 데이터분석 교육과정 facilitator</li>
+          <li>CJ 핵심인재 커리어 어시스턴트 교육과정 facilitator</li>
+          <li>세아제강 AI 활용교육 과정 개발</li>
+        </ul>
+        <ul class="hist" data-panel="hist" data-v="edu" hidden>
+          <li>동국대학교 RISE AI agent 활용 교육과정 facilitator</li>
+          <li>한영대학교 AI Canvas 활용 교육과정 facilitator</li>
+          <li>여수여고 AI Canvas 활용 데이터분석 교육과정 facilitator</li>
+          <li>대전교육청 AI agent 활용 교육과정 facilitator</li>
+          <li>카이스트캠프 AI 영재캠프 강의 facilitator</li>
+          <li>진성여고 AI agent 활용 교육과정 facilitator</li>
+        </ul>
+        <ul class="hist" data-panel="hist" data-v="lab" hidden>
+          <li>ISPACS 2026 (International Symposium on Intelligent Signal Processing and Communication Systems) 제1저자 논문 등록<br><span class="muted small">Vehicle Lane-Change Trajectory Pattern Analysis and Policy Learning in Highway Driving Scenarios</span></li>
+          <li>머신러닝 팀 프로젝트: 회귀·분류 모델을 결합한 스프레이 히터 타구 예측 모델 구현</li>
+          <li>자연어처리 팀 프로젝트: n-gram 기반 요약문 성능 규명과 강화학습 기반 backbone 모델 성능 개선</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PATH & GOALS ============ -->
+<section class="tile dark" id="path">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">과정 안내</p>
+      <h2>작게 만들어 보고,<br>조금씩 키워 갑니다.</h2>
+      <p class="lead">바이브코딩으로 시작해 AI 에이전트로 완성하는 네 단계 여정입니다. 지금은 첫 단계, 모두가 같은 출발선에 서 있습니다.</p>
+    </div>
+    <div class="flow">
+      <span class="runner" aria-hidden="true"></span>
+      <div class="st"><span class="dot"></span><p class="k">입문 · 공통 <span class="badge here">지금 여기</span></p><h3>바이브코딩 체험</h3><p>말로 지시해서 웹앱을 만드는 경험을 처음 해 봅니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">중급 · 트랙 A/B</p><h3>결과물 고도화</h3><p>내 업무에 맞게 결과물을 다듬고 키웁니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">심화 · 트랙 A/B</p><h3>AI 에이전트 설계</h3><p>스스로 판단하고 실행하는 에이전트를 설계합니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">실무 · 트랙 통합</p><h3>현업 적용 · PoC</h3><p>실제 업무에 붙여 보고 효과를 확인합니다.</p></div>
+    </div>
+    <p class="small muted trackn">중급과 심화는 업무 성격에 따라 두 트랙으로 나뉩니다. 트랙 A는 고객·운영 관리, 트랙 B는 시장 분석·신사업 기획을 다룹니다.</p>
+
+    <h3 class="subh">이번 과정에서 가져갈 것</h3>
+    <div class="goals">
+      <div class="card"><span class="kicker">개념</span><h3>바이브코딩 핵심 개념</h3><p>AI와 협업하는 원리를 이해합니다.</p></div>
+      <div class="card"><span class="kicker">방법</span><h3>비개발자 맞춤 협업법</h3><p>코드 대신 말로 일을 맡기는 방법을 익힙니다.</p></div>
+      <div class="card"><span class="kicker">실습</span><h3>기획부터 제작까지</h3><p>계산기와 주문 웹앱 두 가지를 직접 만듭니다.</p></div>
+      <div class="card"><span class="kicker">적용</span><h3>나만의 프로토타입 기획</h3><p>내 가게에 쓸 도구를 하나 구상합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI AGENT ============ -->
+<section class="tile" id="agent">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">AI 에이전트란?</p>
+      <h2>대답하는 AI에서,<br>일을 끝내는 AI로.</h2>
+      <p class="lead">AI 에이전트는 요청을 받으면 스스로 계획하고 실행하고 확인하는 AI입니다. 사람이 단계마다 지시하지 않아도 목표까지 알아서 처리합니다.</p>
+    </div>
+    <figure class="shot"><img src="images/02.webp" alt="챗봇은 메시지 한 장만 건네고, AI 에이전트는 판단, 실행, 확인을 거쳐 여러 손님에게 문자를 보내는 모습을 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="ademo">
+      <div class="req"><span class="kicker">사장님의 요청</span><p>"다음 주 화요일 임시 휴무를 단골손님들에게 알려 줘."</p></div>
+      <div class="seg" role="group" aria-label="누구에게 맡길까요" data-seg="who">
+        <button type="button" aria-pressed="true" data-v="bot">챗봇에게 맡기기</button>
+        <button type="button" aria-pressed="false" data-v="agent">AI 에이전트에게 맡기기</button>
+      </div>
+      <div data-panel="who" data-v="bot" class="apanel">
+        <div class="bub ai wide">안내 문구를 만들어 드릴게요.<br>"안녕하세요, 달빛 커피입니다. 다음 주 화요일은 임시 휴무입니다. 수요일에 더 맛있는 커피로 찾아뵙겠습니다."</div>
+        <p class="note">문구는 받았습니다. 그런데 명단을 찾고, 한 명씩 보내고, 잘 갔는지 확인하는 일은 여전히 사장님 몫입니다.</p>
+      </div>
+      <div data-panel="who" data-v="agent" class="apanel" hidden>
+        <ol class="loop" id="loop">
+          <li data-i="0"><b>① 판단</b><span>단골 명단에서 문자 수신에 동의한 손님 32명을 찾습니다.</span></li>
+          <li data-i="1"><b>② 실행</b><span>휴무 안내 문자를 쓰고 32명에게 보냅니다.</span></li>
+          <li data-i="2"><b>③ 확인</b><span>30명 성공, 2명은 번호 오류. 다시 판단 단계로 돌아갑니다.</span></li>
+          <li data-i="3"><b>① 판단 → ② 실행</b><span>예전 주문 기록에서 바뀐 번호를 찾아 2명에게 다시 보냅니다.</span></li>
+          <li data-i="4"><b>완료</b><span>"32명 모두에게 안내했습니다." 결과만 보고합니다.</span></li>
+        </ol>
+        <div class="row"><button class="ubtn" type="button" id="loopNext">다음 단계 보기</button><button class="pill ghost sm" type="button" id="loopReset">처음부터</button></div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="ch"></div><div class="ch">챗봇</div><div class="ch">AI 에이전트</div>
+      <div class="cl">방식</div><div>한 번 묻고 한 번 답합니다.</div><div>목표까지 여러 단계를 스스로 수행합니다.</div>
+      <div class="cl">비유</div><div>아는 것을 알려 주는 똑똑한 두뇌</div><div>도구를 써서 일을 끝내는 실행자</div>
+      <div class="cl">바깥 세상</div><div>대화창 밖의 일은 직접 하지 못합니다.</div><div>문자, 파일, 웹 같은 도구와 직접 주고받습니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIBE CODING ============ -->
+<section class="tile parch" id="vibe">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">AI 에이전트를 만드는 두 가지 방법</p>
+      <h2>블록을 잇거나,<br>말로 시키거나.</h2>
+    </div>
+    <figure class="shot"><img src="images/03.webp" alt="화이트보드에 블록을 이어 붙이는 워크플로우형과, 말하면 로봇이 바로 웹 화면을 만들어 주는 바이브코딩형을 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="g2">
+      <div class="card"><span class="kicker">워크플로우형</span><h3>단계를 하나씩 연결해 설계합니다</h3>
+        <div class="setlist">
+          <div><span>대표 도구</span><span>Zapier, n8n, AI Canvas 등</span></div>
+          <div><span>장점</span><span>정교하고 안정적인 자동화</span></div>
+          <div><span>진입장벽</span><span>높음 · 단계마다 설정을 배워야 함</span></div>
+        </div>
+      </div>
+      <div class="card pick"><span class="kicker">바이브코딩형 <span class="badge b-blue">이번 과정의 방법</span></span><h3>대화하듯 말하면 AI가 바로 만듭니다</h3>
+        <div class="setlist">
+          <div><span>대표 도구</span><span>ChatGPT, Gemini, Claude 등</span></div>
+          <div><span>장점</span><span>누구나 바로 시작할 수 있음</span></div>
+          <div><span>진입장벽</span><span>낮음 · 말로 설명하면 끝</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="head mt">
+      <p class="eyebrow">바이브코딩이란?</p>
+      <h2>의도는 사람이,<br>코드는 AI가.</h2>
+      <p class="lead">Vibe Coding은 AI에게 자연어로 지시해 앱을 만드는 새로운 개발 방식입니다. 사람은 무엇을 왜 만들지 정하고, AI는 그것을 코드로 옮깁니다.</p>
+    </div>
+    <figure class="shot"><img src="images/04.webp" alt="사장님이 손으로 그린 앱 스케치를 가리키면 로봇 조수가 코드 블록을 쌓아 화면을 만드는 모습. Vibe는 의도, Code는 실행" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="sortgame">
+      <div class="sghead"><h3>이 일은 누구 몫일까요?</h3><span class="badge b-blue" id="sgScore">0 / 8</span></div>
+      <div class="sglist" id="sglist"></div>
+    </div>
+
+    <div class="head mt">
+      <p class="eyebrow">왜 지금 바이브코딩인가</p>
+      <h2>직접 구성하는 시대</h2>
+    </div>
+    <div class="cmp four">
+      <div class="ch">비교 항목</div><div class="ch">기존 방식</div><div class="ch">바이브코딩</div>
+      <div class="cl">기획</div><div>문서로 설명하고 기다립니다.</div><div>바로 만들어 보고 확인합니다.</div>
+      <div class="cl">누가 만드나</div><div>IT 부서나 외주 업체에 맡깁니다.</div><div>현장의 내가 직접 만듭니다.</div>
+      <div class="cl">고치는 속도</div><div>소통하는 사이에 반영이 늦어집니다.</div><div>그 자리에서 바로 고칩니다.</div>
+      <div class="cl">필요한 능력</div><div>프로그래밍 언어 실력</div><div>문제를 정의하고 의도를 전달하는 힘</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPECTATION ============ -->
+<section class="tile dark" id="expect">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">기대와 현실</p>
+      <h2>딸깍 한 번이면<br>끝날까요?</h2>
+      <p class="lead">AI가 코드를 대신 써 주지만, 확인하고 고치는 일은 여전히 사람 몫입니다. 잘하는 일과 조심할 일을 먼저 알아 두면 훨씬 덜 헤맵니다.</p>
+    </div>
+    <figure class="shot"><img src="images/05.webp" alt="버튼 하나로 앱이 완성되길 기대하는 모습과, 돋보기로 화면의 오류를 하나씩 확인하고 고치는 현실의 모습을 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="g2">
+      <div class="card"><span class="kicker">잘하는 일</span>
+        <div class="kvlist">
+          <div><b>빠른 시제품</b><span>아이디어를 바로 화면으로 만들어 봅니다.</span></div>
+          <div><b>단일 목적 도구</b><span>계산기, 대시보드 같은 독립된 작은 도구</span></div>
+          <div><b>반복 업무 정리</b><span>반복되는 글·데이터 처리를 자동으로</span></div>
+          <div><b>개발 장벽 완화</b><span>언어를 몰라도 논리만으로 기능 구현</span></div>
+        </div>
+      </div>
+      <div class="card"><span class="kicker">조심할 일</span>
+        <div class="kvlist">
+          <div><b>직접 검증</b><span>AI는 그럴듯한 오류를 만들 수 있습니다.</span></div>
+          <div><b>개인정보</b><span>손님 연락처나 기밀 자료는 넣지 않습니다.</span></div>
+          <div><b>큰 시스템</b><span>복잡한 DB나 대규모 시스템은 피합니다.</span></div>
+          <div><b>외부 연동</b><span>복잡한 API 연결은 불안정할 수 있습니다.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="quiz">
+      <h3>이건 바이브코딩으로 해도 될까요?</h3>
+      <p class="muted small">상황을 읽고 골라 보세요.</p>
+      <div class="qlist" id="qlist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ERRC ============ -->
+<section class="tile" id="errc">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">내 일 다시 그리기</p>
+      <h2>AI와 함께라면<br>내 일은 어떻게 달라질까요?</h2>
+      <p class="lead">없앨 일, 줄일 일, 더 잘할 일, 새로 시작할 일. 네 가지 질문으로 내 업무를 다시 살펴봅니다. 업종을 골라 예시를 보고, 아래 칸에 내 답을 적어 보세요.</p>
+    </div>
+    <div class="seg" role="group" aria-label="업종 예시" data-seg="biz">
+      <button type="button" aria-pressed="true" data-v="cafe">카페</button>
+      <button type="button" aria-pressed="false" data-v="food">음식점</button>
+      <button type="button" aria-pressed="false" data-v="hair">미용실</button>
+      <button type="button" aria-pressed="false" data-v="shop">공방·소매</button>
+      <button type="button" aria-pressed="false" data-v="etc">기타 업종</button>
+    </div>
+    <div class="errc">
+      <div class="card"><div class="el"><span class="lt">E</span><div><h3>Eliminate 제거</h3><p class="small muted">AI가 100% 대신할 수 있는 일은?</p></div></div>
+        <p class="ex" data-ex="0"></p><label class="sr" for="errc0">내 답: 없앨 일</label><textarea class="inp" id="errc0" placeholder="내 가게에서 없앨 수 있는 일"></textarea></div>
+      <div class="card"><div class="el"><span class="lt">R</span><div><h3>Reduce 감소</h3><p class="small muted">시간을 획기적으로 줄여야 할 일은?</p></div></div>
+        <p class="ex" data-ex="1"></p><label class="sr" for="errc1">내 답: 줄일 일</label><textarea class="inp" id="errc1" placeholder="시간을 줄이고 싶은 일"></textarea></div>
+      <div class="card"><div class="el"><span class="lt">R</span><div><h3>Raise 증대</h3><p class="small muted">AI 덕분에 더 잘할 수 있는 일은?</p></div></div>
+        <p class="ex" data-ex="2"></p><label class="sr" for="errc2">내 답: 더 잘할 일</label><textarea class="inp" id="errc2" placeholder="더 잘하고 싶은 일"></textarea></div>
+      <div class="card"><div class="el"><span class="lt">C</span><div><h3>Create 창조</h3><p class="small muted">처음으로 시도해 볼 수 있는 일은?</p></div></div>
+        <p class="ex" data-ex="3"></p><label class="sr" for="errc3">내 답: 새로 시작할 일</label><textarea class="inp" id="errc3" placeholder="새로 시작해 보고 싶은 일"></textarea></div>
+    </div>
+    <div class="row mt-s"><button class="ubtn" type="button" id="errcCopy">내 답 복사하기</button><span class="small muted">적은 내용은 이 브라우저에만 저장됩니다.</span></div>
+  </div>
+</section>
+
+<!-- ============ WEB BASICS ============ -->
+<section class="tile parch" id="web">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">웹을 이루는 세 가지 언어</p>
+      <h2>웹페이지는<br>뼈대, 옷, 두뇌로 이루어집니다.</h2>
+      <p class="lead">AI가 만들어 주는 웹앱도 이 세 가지로 되어 있습니다. 하나씩 켜 보면서 각각 무슨 일을 하는지 확인해 보세요.</p>
+    </div>
+    <figure class="shot"><img src="images/06.webp" alt="뼈대만 있는 건물(HTML), 인테리어가 들어간 건물(CSS), 불이 켜지고 문이 열리는 건물(JavaScript)의 세 단계" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="seg" role="group" aria-label="단계 선택" data-seg="layer">
+      <button type="button" aria-pressed="false" data-v="1">HTML만</button>
+      <button type="button" aria-pressed="false" data-v="2">+ CSS</button>
+      <button type="button" aria-pressed="true" data-v="3">+ JavaScript</button>
+    </div>
+    <div class="webplay">
+      <div class="shopcard" id="shopcard" data-layer="3">
+        <p class="sc-eyebrow">동네 카페</p>
+        <h3 class="sc-title">달빛 커피</h3>
+        <p class="sc-desc">오늘의 원두: 에티오피아 예가체프</p>
+        <div class="sc-stamps" id="scStamps" aria-label="스탬프"></div>
+        <button type="button" class="sc-btn" id="scBtn">스탬프 찍기</button>
+        <p class="sc-msg" id="scMsg" aria-live="polite"></p>
+      </div>
+      <div class="pbox code"><div class="bar"><span id="codeLabel">지금 켜진 코드</span></div><pre id="codeView"></pre></div>
+    </div>
+    <div class="g3 mt-s">
+      <div class="card"><span class="kicker">HTML · 뼈대</span><h3>무엇이 어디에 있는지</h3><p>제목, 글, 이미지, 버튼을 배치하고 정보의 순서를 정합니다.</p></div>
+      <div class="card"><span class="kicker">CSS · 인테리어</span><h3>어떻게 보이는지</h3><p>색상, 글꼴, 크기를 정하고 보기 좋게 정렬합니다.</p></div>
+      <div class="card"><span class="kicker">JavaScript · 두뇌</span><h3>눌렀을 때 무슨 일이</h3><p>클릭에 반응하고, 계산과 판단 같은 동작을 처리합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DATA FLOW ============ -->
+<section class="tile dark" id="dataflow">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">데이터의 흐름</p>
+      <h2>손님 주문이 주방까지<br>가는 길과 같습니다.</h2>
+      <p class="lead">웹 서비스 뒤에서는 네 곳이 일을 나눠 맡습니다. 주문을 넣고 한 바퀴 따라가 보세요.</p>
+    </div>
+    <figure class="shot"><img src="images/07.webp" alt="식당 단면도. 홀(프론트엔드), 웨이터(API), 주방(백엔드), 창고(데이터베이스) 순서로 주문이 오가는 모습" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="stations" id="stations">
+      <div class="track" aria-hidden="true"><span class="tok" id="tok"></span></div>
+      <div class="sta" data-i="0"><span class="kicker">프론트엔드</span><h3>홀 · 메뉴판</h3><p>손님이 보고 누르는 화면</p></div>
+      <div class="sta" data-i="1"><span class="kicker">API</span><h3>웨이터</h3><p>요청과 응답을 전달</p></div>
+      <div class="sta" data-i="2"><span class="kicker">백엔드</span><h3>주방</h3><p>계산하고 처리하는 곳</p></div>
+      <div class="sta" data-i="3"><span class="kicker">데이터베이스</span><h3>냉장고 · 창고</h3><p>데이터를 보관하는 곳</p></div>
+    </div>
+    <div class="flowcap"><p id="flowCap" aria-live="polite">버튼을 누르면 '아메리카노 2잔' 주문이 출발합니다.</p><button class="pill" type="button" id="flowGo">주문 넣어 보기</button></div>
+    <p class="note dk">이번 실습에서는 프론트엔드, 즉 홀만 만듭니다. 서버나 데이터베이스 없이 브라우저에서 바로 돌아가는 웹앱입니다.</p>
+  </div>
+</section>
+
+<!-- ============ TOOLS ============ -->
+<section class="tile" id="tools">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">AI 3대장 × 바이브코딩 도구</p>
+      <h2>어떤 AI로<br>만들까요?</h2>
+      <p class="lead">세 회사의 AI 모두 대화창 옆에 결과 화면을 바로 띄워 주는 기능이 있습니다. 실습에서는 이 미리보기 화면에서 결과를 확인합니다.</p>
+    </div>
+    <div class="g3">
+      <div class="card"><span class="kicker">OpenAI</span><h3>ChatGPT</h3>
+        <div class="setlist"><div><span>캔버스</span><span>대화형 코드 생성·편집</span></div><div><span>Codex</span><span>코드 자동화 에이전트</span></div></div>
+        <p class="small muted mt-xs">미리보기: 캔버스 창</p></div>
+      <div class="card"><span class="kicker">Anthropic</span><h3>Claude</h3>
+        <div class="setlist"><div><span>아티팩트</span><span>대화 옆 결과 미리보기</span></div><div><span>Claude Code</span><span>코드 자동화 에이전트</span></div></div>
+        <p class="small muted mt-xs">미리보기: 아티팩트 창</p></div>
+      <div class="card"><span class="kicker">Google</span><h3>Gemini</h3>
+        <div class="setlist"><div><span>Gemini 캔버스</span><span>빠른 시제품, 무료</span></div><div><span>AI Studio</span><span>풀스택, 배포 가능</span></div></div>
+        <p class="small muted mt-xs">미리보기: 코드 미리보기 창</p></div>
+    </div>
+    <div class="indep">
+      <span class="kicker">여러 AI를 골라 쓰는 독립 도구</span>
+      <div class="row"><span class="tagc">Lovable <i>lovable.dev</i></span><span class="tagc">Bolt <i>bolt.new</i></span><span class="tagc">Replit <i>replit.com</i></span><span class="small muted">모두 무료로 시작할 수 있지만 사용량 제한이 있습니다.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEVEL ============ -->
+<section class="tile parch" id="level">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">바이브코딩 레벨</p>
+      <h2>이번 과정은<br>1단계와 2단계를 다룹니다.</h2>
+      <p class="lead">무엇을 붙이느냐에 따라 난이도가 달라집니다. 단계를 눌러 어떤 것을 만들 수 있는지 살펴보세요.</p>
+    </div>
+    <figure class="shot"><img src="images/08.webp" alt="Level 1부터 Level 5까지 올라가는 계단. Level 1과 2만 파란색으로 강조되어 이번 과정의 범위를 보여 줌" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="ladder">
+      <div class="lsteps" role="group" aria-label="레벨 선택" id="lsteps"></div>
+      <div class="card ldetail" id="ldetail"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORKFLOW ============ -->
+<section class="tile dark" id="workflow">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">바이브코딩 워크플로우</p>
+      <h2>기획하고, 말하고,<br>고치고, 내보냅니다.</h2>
+    </div>
+<figure class="shot"><img src="images/09.webp" alt="기획(PLAN), 지시(PROMPT), 확인과 수정(REFINE), 공유(DEPLOY)로 이어지는 길. 지시와 수정은 서로 오가며 반복됨" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+
+    <div class="flow">
+      <span class="runner" aria-hidden="true"></span>
+      <div class="st"><span class="dot"></span><p class="k">1 · PLAN</p><h3>아이디어 구체화</h3><p>만들 기능을 정하고 화면을 대충 그려 봅니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">2 · PROMPT</p><h3>AI에게 지시</h3><p>AI에게 역할을 주고 맥락을 함께 전달합니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">3 · EVALUATE &amp; REFINE</p><h3>확인하고 고치기</h3><p>직접 눌러 보고, 화면 캡처나 오류 메시지를 AI에게 보여 주며 고칩니다.</p></div>
+      <div class="st"><span class="dot"></span><p class="k">4 · DEPLOY</p><h3>주소로 공유</h3><p>완성한 결과물을 웹 주소로 다른 사람과 나눕니다.</p></div>
+    </div>
+    <p class="note dk mt-s">2단계와 3단계는 여러 번 오갑니다. 한 번에 완벽한 결과가 나오지 않는 것이 정상입니다.</p>
+  </div>
+</section>
+
+<!-- ============ PROMPT ============ -->
+<section class="tile" id="prompt">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">좋은 프롬프트</p>
+      <h2>구체적으로 말할수록<br>원하는 화면이 나옵니다.</h2>
+      <p class="lead">같은 계산기를 부탁해도, 어떻게 말하느냐에 따라 결과가 완전히 달라집니다.</p>
+    </div>
+    <figure class="shot"><img src="images/10.webp" alt="'커피 주세요'라고만 말해 엉뚱한 커피를 받은 손님과, 체크리스트로 구체적으로 말해 원하는 음료를 받은 손님의 비교" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="seg" role="group" aria-label="말하는 방식" data-seg="pc">
+      <button type="button" aria-pressed="true" data-v="vague">대충 말하기</button>
+      <button type="button" aria-pressed="false" data-v="struct">구조화해서 말하기</button>
+    </div>
+    <div class="g2 mt-xs">
+      <div class="pbox"><div class="bar"><span>내가 쓴 프롬프트</span></div>
+        <pre data-panel="pc" data-v="vague">계산기 만들어 줘.</pre>
+        <pre data-panel="pc" data-v="struct" hidden># 역할
+프론트엔드 웹 개발 전문가
+# 목표
+여행 경비를 1인당으로 나눠 주는 계산기
+# 입력
+인원수, 항공료, 숙박비, 식비
+# 출력
+총 경비, 1인당 금액, 항목별 비율 그래프
+# 톤
+경쾌하고 한눈에 보이는 스타일</pre>
+      </div>
+      <div>
+        <div class="mock" data-panel="pc" data-v="vague"><span class="lbl">AI가 만든 화면</span><div class="field"></div><div class="mchips"><i></i><i></i><i></i></div><div class="mbtn grey"></div><p class="small muted">무엇을 계산하는지 모르니 숫자 버튼만 있는 일반 계산기가 나옵니다.</p></div>
+        <div class="mock" data-panel="pc" data-v="struct" hidden><span class="lbl">AI가 만든 화면</span><div class="field"></div><div class="field"></div><div class="cbar big"><i style="width:46%"></i><i style="width:31%"></i><i style="width:23%"></i></div><div class="mbtn"></div><p class="small muted">입력칸, 결과, 그래프까지 내가 원한 그대로 나옵니다.</p></div>
+      </div>
+    </div>
+
+    <h3 class="subh">좋은 프롬프트의 네 가지 요소</h3>
+    <div class="g2">
+      <div class="card"><span class="kicker">1 · 역할 & 목적</span><h3>Role · Goal</h3><p>AI에게 구체적인 역할을 주고, 해결할 문제를 분명히 말합니다.</p></div>
+      <div class="card"><span class="kicker">2 · 사용자 & 기능</span><h3>User · Features</h3><p>누가 쓰는지 알려 주고, 꼭 필요한 기능을 3~5개 이내로 적습니다.</p></div>
+      <div class="card"><span class="kicker">3 · 형식 & 제약</span><h3>Format · Constraints</h3><p>원하는 결과 형태와 반드시 지킬 조건을 정합니다.</p></div>
+      <div class="card"><span class="kicker">4 · 톤 & 스타일</span><h3>Tone · Style</h3><p>말투와 전체 분위기를 정합니다. 예: 친근한, 신뢰감 있는.</p></div>
+    </div>
+
+    <div class="head mt">
+      <p class="eyebrow">PRD 작성 공식</p>
+      <h2>만들기 전에<br>네 줄 기획서를 씁니다.</h2>
+      <p class="lead">PRD는 '무엇을 왜 만드는지' 적은 기획서입니다. 아래 네 칸만 채우면 AI에게 가장 정확한 업무 지시서가 됩니다. 예시를 지우고 내 내용으로 바꿔 보세요.</p>
+    </div>
+    <div class="builder">
+      <form class="form" id="prdForm" autocomplete="off">
+        <div><label class="t" for="prdWhy">Why · 왜 필요한가요?</label><input class="inp" id="prdWhy" value="손님이 쿠폰 도장을 몇 개 모았는지 매번 물어봐서 번거롭습니다"><p class="hint">해결할 문제를 한두 문장으로</p></div>
+        <div><span class="t">What · 무엇을 만드나요?</span>
+          <div class="seg" role="group" aria-label="형태" data-seg="prdWhat">
+            <button type="button" aria-pressed="true" data-v="웹앱">웹앱</button>
+            <button type="button" aria-pressed="false" data-v="위젯">위젯</button>
+            <button type="button" aria-pressed="false" data-v="챗봇">챗봇</button>
+          </div></div>
+        <div><label class="t" for="prdUser">Target · 누가 쓰나요?</label><input class="inp" id="prdUser" value="스마트폰에 익숙하지 않은 50대 단골손님"></div>
+        <div><label class="t" for="prdKey">Key Action · 꼭 해야 하는 행동</label><textarea class="inp" id="prdKey">전화번호 뒷자리로 내 도장 개수 확인하기
+도장 10개가 모이면 무료 음료 쿠폰 보여 주기</textarea><p class="hint">한 줄에 하나씩, 세 가지 이내</p></div>
+        <div><span class="t">Vibe · 어떤 느낌인가요?</span>
+          <div class="row" role="group" aria-label="분위기" id="prdVibe">
+            <button type="button" class="chip" aria-pressed="true">미니멀하고 따뜻한</button>
+            <button type="button" class="chip" aria-pressed="false">전문적이고 신뢰감 있는</button>
+            <button type="button" class="chip" aria-pressed="false">경쾌하고 귀여운</button>
+            <button type="button" class="chip" aria-pressed="false">큼직한 글씨, 높은 대비</button>
+          </div></div>
+      </form>
+      <div class="pbox"><div class="bar"><span>완성된 프롬프트</span><button class="ubtn" type="button" data-copy="prdOut">복사</button></div><pre class="tall" id="prdOut"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LAB 1 ============ -->
+<section class="tile parch" id="lab1">
+  <div class="wrap wide">
+    <div class="head">
+      <p class="eyebrow">실습 1 · 바이브코딩 맛보기</p>
+      <h2>여행 경비 계산기를<br>프롬프트 한 장으로 만듭니다.</h2>
+      <p class="lead">프롬프트를 붙여 넣고, 화면이 뜨는 순간을 경험해 봅니다. 먼저 그대로 만들어 보고, 그다음 하나씩 바꿔 보세요.</p>
+    </div>
+    <figure class="shot"><img src="images/12.webp" alt="항공권, 호텔 열쇠, 음식 접시가 계산기로 들어가 여행자 네 명 앞에 같은 금액의 동전 더미로 나뉘는 그림" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="steps four">
+      <div class="step"><span class="n">1</span><div><h3>AI 열기</h3><p>ChatGPT, Claude, Gemini 중 하나를 엽니다.</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>복사 · 붙여넣기</h3><p>아래 프롬프트를 복사해 대화창에 넣습니다.</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>미리보기 확인</h3><p>숫자를 넣어 보고 계산이 맞는지 확인합니다.</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>하나만 바꾸기</h3><p>스타일이나 기능을 하나 골라 다시 요청합니다.</p></div></div>
+    </div>
+    <div class="builder mt-s">
+      <div class="form">
+        <div><span class="t">디자인 스타일</span>
+          <div class="seg" role="group" aria-label="디자인 스타일" data-seg="l1style">
+            <button type="button" aria-pressed="true" data-v="pop">팝아트</button>
+            <button type="button" aria-pressed="false" data-v="min">미니멀</button>
+            <button type="button" aria-pressed="false" data-v="retro">레트로 게임</button>
+            <button type="button" aria-pressed="false" data-v="ticket">항공권</button>
+          </div></div>
+        <div><span class="t">커스텀 가이드 · 원하는 것만 더하기</span>
+          <div class="chips-col" id="l1mods">
+            <button type="button" class="chip" aria-pressed="false" data-m="0"><b>기능 추가</b> · 통화 선택과 환율 적용</button>
+            <button type="button" class="chip" aria-pressed="false" data-m="1"><b>출력 형태</b> · 영수증 모양으로 출력</button>
+            <button type="button" class="chip" aria-pressed="false" data-m="2"><b>계산 대상</b> · 단체 회식비 정산으로</button>
+            <button type="button" class="chip" aria-pressed="false" data-m="3"><b>계산 방식</b> · 차등 정산과 예산 대비 잔액</button>
+          </div></div>
+      </div>
+      <div class="pbox"><div class="bar"><span>실습 1 프롬프트</span><button class="ubtn" type="button" data-copy="l1Out">복사</button></div><pre class="tall" id="l1Out"></pre></div>
+    </div>
+
+    <div class="head mt">
+      <p class="eyebrow">완성 예시</p>
+      <h2>이런 화면이 나오면<br>성공입니다.</h2>
+      <p class="lead">아래는 실제로 동작하는 예시입니다. 내가 만든 계산기와 같은 숫자를 넣어 결과가 맞는지 비교해 보세요.</p>
+    </div>
+    <div class="tcalc">
+      <form class="form" id="tcForm" autocomplete="off">
+        <div class="tcgrid">
+          <div><label class="t" for="tcN">인원수</label><input class="inp" id="tcN" type="number" inputmode="numeric" min="1" value="4"></div>
+          <div><label class="t" for="tcA">항공료</label><input class="inp" id="tcA" type="number" inputmode="numeric" min="0" step="10000" value="1200000"></div>
+          <div><label class="t" for="tcH">숙박비</label><input class="inp" id="tcH" type="number" inputmode="numeric" min="0" step="10000" value="800000"></div>
+          <div><label class="t" for="tcF">식비</label><input class="inp" id="tcF" type="number" inputmode="numeric" min="0" step="10000" value="600000"></div>
+        </div>
+      </form>
+      <div class="tcres">
+        <div><span class="muted small">총 경비</span><strong id="tcTot"></strong></div>
+        <div><span class="muted small">1인당 부담</span><strong id="tcPer"></strong></div>
+        <div class="tcbar" id="tcBar"><i></i><i></i><i></i></div>
+        <div class="legend" id="tcLeg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIX ============ -->
+<section class="tile" id="fix">
+  <div class="wrap wide">
+    <div class="head">
+      <p class="eyebrow">AI 결과물 고치기</p>
+      <h2>"이상해요"라고만 하면<br>AI도 모릅니다.</h2>
+      <p class="lead">무엇이 어떻게 이상한지, 어떻게 바뀌면 좋겠는지 말해 주어야 AI가 정확히 고칩니다.</p>
+    </div>
+    <figure class="shot"><img src="images/11.webp" alt="미용실에서 '알아서 예쁘게요'라는 모호한 요청과 '옆머리만 2cm 다듬어 주세요'라는 구체적인 요청을 비교한 그림" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="g2">
+      <div class="card"><span class="badge b-bad">나쁜 요청</span><h3 class="mt-xs">"이상해요. 다시 만들어 주세요."</h3><p>무엇이 이상한지, 어떻게 바꿔야 하는지 설명이 없어 AI가 방향을 잡지 못합니다.</p></div>
+      <div class="card"><span class="badge b-good">좋은 요청</span><h3 class="mt-xs">"항목이 너무 많아요. 이름과 목적만 남기고 표로 정리해 주세요."</h3><p>무엇을 줄일지와 원하는 형태(표)를 분명히 알려 줍니다.</p></div>
+    </div>
+    <div class="row mt-s phr">
+      <span class="kicker">바로 쓰는 수정 지시어</span>
+      <button type="button" class="chip" data-say="복잡한 기능은 빼고, 꼭 필요한 핵심 기능만 남겨서 더 단순하게 만들어 줘.">더 단순하게</button>
+      <button type="button" class="chip" data-say="어려운 용어는 쓰지 말고 처음 보는 사람도 이해할 수 있는 쉬운 말로 바꿔 줘.">초보자도 이해되게</button>
+      <button type="button" class="chip" data-say="결과를 체크리스트 형식으로 정리해 줘.">[형식]으로 정리</button>
+    </div>
+
+    <h3 class="subh">이럴 땐 이렇게 말해 보세요</h3>
+    <div class="fix">
+      <div class="symptoms" id="symptoms" role="group" aria-label="증상 선택"></div>
+      <div>
+        <div class="tipnote" id="symTip"></div>
+        <div class="pbox"><div class="bar"><span>AI에게 이렇게 말하기</span><button class="ubtn" type="button" data-copy="symSay">복사</button></div><pre id="symSay"></pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LAB 2 ============ -->
+<section class="tile parch" id="lab2">
+  <div class="wrap wide">
+    <div class="head">
+      <p class="eyebrow">실습 2 · 우리 가게 주문 웹앱</p>
+      <h2>우리 가게만의<br>주문 웹앱을 만들어 봅니다.</h2>
+      <p class="lead">업종을 고르고 가게 이름과 메뉴를 내 가게 것으로 바꿔 보세요. 오른쪽 프롬프트가 바로 바뀝니다. 완성된 프롬프트를 복사해 AI에게 붙여 넣으면 됩니다.</p>
+    </div>
+    <figure class="shot"><img src="images/13.webp" alt="스마트폰 주문 화면을 중심으로 카페, 분식집, 꽃집 세 가게의 상품이 화면 속 카드로 들어가는 모습" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="builder">
+      <form class="form" id="l2Form" autocomplete="off">
+        <div><span class="t">업종</span>
+          <div class="seg" role="group" aria-label="업종" data-seg="l2biz">
+            <button type="button" aria-pressed="true" data-v="cafe">카페</button>
+            <button type="button" aria-pressed="false" data-v="burger">수제 버거집</button>
+            <button type="button" aria-pressed="false" data-v="snack">분식집</button>
+            <button type="button" aria-pressed="false" data-v="cinema">영화관 매점</button>
+            <button type="button" aria-pressed="false" data-v="etc">기타 업종</button>
+          </div>
+          <div id="l2EtcWrap" hidden style="margin-top:14px"><label class="t" for="l2Etc">업종 직접 입력</label><input class="inp" id="l2Etc" placeholder="예: 꽃집, 세탁소, 학원, 공방"><p class="hint">내 업종 이름을 적으면 프롬프트에 반영됩니다. 아래 가게 이름·상품·옵션도 내 것으로 바꿔 주세요.</p></div></div>
+        <div><label class="t" for="l2Name">가게 이름</label><input class="inp" id="l2Name"></div>
+        <div><label class="t" for="l2Menu">메뉴와 가격</label><textarea class="inp" id="l2Menu" rows="5"></textarea><p class="hint">한 줄에 메뉴(또는 상품·서비스) 하나, 이름 뒤에 가격</p></div>
+        <div><label class="t" for="l2Opt">옵션</label><input class="inp" id="l2Opt"></div>
+        <div><span class="t">말투 · 페르소나</span>
+          <div class="seg" role="group" aria-label="말투" data-seg="l2tone">
+            <button type="button" aria-pressed="true" data-v="trend">세련된 기본형</button>
+            <button type="button" aria-pressed="false" data-v="kind">친절한 동네 사장님</button>
+            <button type="button" aria-pressed="false" data-v="jumak">조선시대 주막</button>
+          </div></div>
+        <div><span class="t">주문 방식</span>
+          <div class="seg" role="group" aria-label="주문 방식" data-seg="l2how">
+            <button type="button" aria-pressed="true" data-v="menu">메뉴판에서 고르기</button>
+            <button type="button" aria-pressed="false" data-v="quiz">질문에 답하는 퀴즈형</button>
+          </div></div>
+        <div><span class="t">주문 후 화면</span>
+          <div class="seg" role="group" aria-label="주문 후 화면" data-seg="l2out">
+            <button type="button" aria-pressed="true" data-v="receipt">주문 내역서</button>
+            <button type="button" aria-pressed="false" data-v="ticket">대기 번호표</button>
+            <button type="button" aria-pressed="false" data-v="anim">단계별 애니메이션</button>
+          </div></div>
+        <div><span class="t">디자인 스타일</span>
+          <div class="seg" role="group" aria-label="디자인 스타일" data-seg="l2style">
+            <button type="button" aria-pressed="true" data-v="pop">팝아트</button>
+            <button type="button" aria-pressed="false" data-v="min">미니멀</button>
+            <button type="button" aria-pressed="false" data-v="hand">손글씨 감성</button>
+            <button type="button" aria-pressed="false" data-v="dark">다크 모던</button>
+          </div></div>
+      </form>
+      <div class="l2right">
+        <div class="pbox"><div class="bar"><span>실습 2 프롬프트</span><button class="ubtn" type="button" data-copy="l2Out">복사</button></div><pre class="tall" id="l2Out"></pre></div>
+        <div class="phone2" aria-label="주문 화면 미리 그려 보기">
+          <div class="scr">
+            <p class="ttl" id="pvName"></p>
+            <p class="q" id="pvGreet"></p>
+            <div class="pvmenu" id="pvMenu"></div>
+            <div class="go">주문하기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECK ============ -->
+<section class="tile" id="check">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">좋은 결과물의 기준</p>
+      <h2>다 만들었다면,<br>네 가지를 확인합니다.</h2>
+    </div>
+    <div class="checkhead"><h3>체크리스트</h3><span class="badge b-blue" id="ckCount">0 / 4</span></div>
+    <div class="checks" id="checks">
+      <label><input type="checkbox" id="ck0"><span><b>문제가 분명한가요?</b><br><span class="small muted">누구의 어떤 불편을 해결하는지 한 문장으로 말할 수 있습니다.</span></span></label>
+      <label><input type="checkbox" id="ck1"><span><b>입력값이 꼭 필요한 것만 있나요?</b><br><span class="small muted">손님이나 직원이 채워야 하는 칸이 최소한입니다.</span></span></label>
+      <label><input type="checkbox" id="ck2"><span><b>바로 쓸 수 있는 결과가 나오나요?</b><br><span class="small muted">결과를 보고 다음 행동을 바로 할 수 있습니다.</span></span></label>
+      <label><input type="checkbox" id="ck3"><span><b>한 화면에서 이해되나요?</b><br><span class="small muted">처음 보는 사람도 설명 없이 쓸 수 있습니다.</span></span></label>
+    </div>
+    <h3 class="subh">자주 하는 실수</h3>
+    <div class="g2">
+      <div class="card"><h3>기능 과다</h3><p>처음부터 다 넣으려 하면 결과가 꼬입니다. 핵심 하나부터 시작합니다.</p></div>
+      <div class="card"><h3>목적 불명확</h3><p>왜 만드는지 모르면 AI도 엉뚱한 것을 만듭니다.</p></div>
+      <div class="card"><h3>모호한 피드백</h3><p>"별로예요" 대신 무엇을 어떻게 바꿀지 말합니다.</p></div>
+      <div class="card"><h3>검증 없는 공유</h3><p>숫자와 버튼을 직접 눌러 확인한 뒤에 공유합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APPLY ============ -->
+<section class="tile parch" id="apply">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">실무 적용 아이디어</p>
+      <h2>다음에는<br>무엇을 만들어 볼까요?</h2>
+      <p class="lead">업무별로 바이브코딩으로 만들 수 있는 도구들입니다. 하나를 고르면 바로 시작할 수 있는 프롬프트가 나옵니다.</p>
+    </div>
+    <div class="seg" role="group" aria-label="업무 분야" data-seg="job" id="jobSeg"></div>
+    <div class="apgrid mt-xs">
+      <div class="symptoms" id="jobItems" role="group" aria-label="도구 선택"></div>
+      <div class="pbox"><div class="bar"><span>시작 프롬프트</span><button class="ubtn" type="button" data-copy="jobOut">복사</button></div><pre id="jobOut"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHARE ============ -->
+<section class="tile" id="share">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">결과 공유 및 발표</p>
+      <h2>만든 것을<br>세 문장으로 소개합니다.</h2>
+      <p class="lead">문제, 만든 도구, 적용 계획. 이 세 가지만 말하면 충분합니다. 예시를 내 내용으로 바꿔 발표 대본을 만들어 보세요.</p>
+    </div>
+    <div class="g3">
+      <div class="card"><span class="kicker">문제 정의</span><h3>해결하려는 문제</h3><p class="small">해결할 문제 · 왜 중요한지 · 지금까지의 한계</p></div>
+      <div class="card"><span class="kicker">만든 도구</span><h3>결과물 소개</h3><p class="small">주요 기능 · 화면 · 사용 장면</p></div>
+      <div class="card"><span class="kicker">적용 계획</span><h3>실무 적용 방안</h3><p class="small">적용 방법 · 예상 효과 · 다음 단계</p></div>
+    </div>
+    <div class="builder mt-s">
+      <form class="form" id="shForm" autocomplete="off">
+        <div><label class="t" for="sh0">어떤 문제였나요?</label><input class="inp" id="sh0" value="점심시간에 주문이 몰리면 계산대 줄이 길어집니다"></div>
+        <div><label class="t" for="sh1">무엇을 만들었나요?</label><input class="inp" id="sh1" value="손님이 휴대폰으로 메뉴를 고르고 대기 번호를 받는 주문 웹앱"></div>
+        <div><label class="t" for="sh2">어떻게 쓸 건가요?</label><input class="inp" id="sh2" value="테이블마다 QR 코드를 붙여 점심시간부터 먼저 써 보겠습니다"></div>
+      </form>
+      <div class="pbox"><div class="bar"><span>발표 대본</span><button class="ubtn" type="button" data-copy="shOut">복사</button></div><pre id="shOut"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section class="tile dark" id="close">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">마무리</p>
+      <h2>오늘부터<br>바이브코딩 1일.</h2>
+      <p class="lead">거창한 서비스가 아니어도 됩니다. 매일 반복하는 작은 불편 하나를 골라, 말로 설명하고, 만들어 보세요.</p>
+    </div>
+    <figure class="shot"><img src="images/14.webp" alt="이른 아침 사장님이 가게 셔터를 올리며 웃고, 카운터 노트북에 웹앱이 켜져 있으며 달력에 1일이라고 적힌 모습" width="1536" height="1024" loading="lazy" decoding="async"></figure>
+<div class="sum">
+      <div class="card"><p class="big">말로 설계</p><p>Why, What, Key Action, Vibe. 네 줄이면 AI에게 일을 맡길 수 있습니다.</p></div>
+      <div class="card"><p class="big">구체적으로 수정</p><p>무엇을 어떻게 바꿀지 말하면, AI는 정확히 고칩니다.</p></div>
+      <div class="card"><p class="big">작게 시작</p><p>한 화면, 한 기능부터. 잘 되면 그때 하나씩 더합니다.</p></div>
+    </div>
+    <div class="warnlist">
+      <div><b>다음 단계</b><span>중급에서는 트랙 A(고객·운영 관리)와 트랙 B(시장 분석·신사업 기획)로 나뉘어, 오늘 만든 결과물을 내 업무에 맞게 키워 갑니다.</span></div>
+      <div><b>기억할 것</b><span>손님 연락처 같은 개인정보는 AI에 넣지 않습니다. 결과는 늘 직접 눌러 보고 확인합니다.</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="in"><span>© 2026 AlgorithmLABS</span><span>소상공인을 위한 AI 업무자동화 교육과정 · AI Agent 활용 입문</span></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hasBatchim(w){w=String(w).trim();var c=w.charCodeAt(w.length-1);if(c>=0xAC00&&c<=0xD7A3)return (c-0xAC00)%28!==0;return /[0-9lmnLMN]$/.test(w)&&!/[2459]$/.test(w)}
+function eul(w){return w+(hasBatchim(w)?'을':'를')}
+function endDot(s){s=String(s).trim();return /[.!?。]$/.test(s)?s:s+'.'}
+
+/* toast & copy */
+var toastT;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show')},2000)}
+function selectText(el){try{var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+function copyText(text,el){
+  var fail=function(){if(el)selectText(el);toast('선택된 내용을 직접 복사해 주세요 (Ctrl/⌘ + C)')};
+  try{navigator.clipboard.writeText(text).then(function(){toast('복사했습니다. AI 대화창에 붙여 넣으세요.')},fail)}catch(e){fail()}
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-copy]');if(b){var el=document.getElementById(b.getAttribute('data-copy'));copyText(el.textContent,el);return}
+  var s=e.target.closest('[data-say]');if(s){copyText(s.getAttribute('data-say'));}
+});
+
+/* segmented controls with panels */
+var segVal={};
+function setSeg(name,v){
+  segVal[name]=v;
+  $$('[data-seg="'+name+'"] button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v===v))});
+  $$('[data-panel="'+name+'"]').forEach(function(p){p.hidden=p.dataset.v!==v});
+  (segHooks[name]||[]).forEach(function(f){f(v)});
+}
+var segHooks={};
+function onSeg(name,f){(segHooks[name]=segHooks[name]||[]).push(f)}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-seg] button');if(!b)return;
+  setSeg(b.parentNode.getAttribute('data-seg'),b.dataset.v);
+});
+$$('[data-seg]').forEach(function(g){var on=$('button[aria-pressed="true"]',g);if(on)segVal[g.getAttribute('data-seg')]=on.dataset.v});
+
+/* scroll spy */
+var navMap={intro:'intro',instructor:'instructor',path:'instructor',agent:'agent',vibe:'vibe',expect:'vibe',errc:'vibe',web:'web',dataflow:'web',tools:'web',level:'web',workflow:'prompt',prompt:'prompt',lab1:'lab1',fix:'fix',lab2:'lab2',check:'lab2',apply:'share',share:'share',close:'close'};
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){var id=navMap[en.target.id];$$('#snav a').forEach(function(a){var on=a.getAttribute('href')==='#'+id;a.classList.toggle('on',on);if(on&&a.scrollIntoView){var n=$('#snav');n.scrollTo({left:a.offsetLeft-n.offsetLeft-20,behavior:'smooth'})}})}})},{rootMargin:'-45% 0px -50% 0px'});
+  $$('main>section').forEach(function(s){io.observe(s)});
+}
+
+/* agent loop */
+var loopI=-1;
+function drawLoop(){$$('#loop li').forEach(function(li,i){li.classList.toggle('on',i<=loopI);li.classList.toggle('cur',i===loopI)});$('#loopNext').textContent=loopI>=4?'완료되었습니다':'다음 단계 보기';$('#loopNext').disabled=loopI>=4}
+$('#loopNext').addEventListener('click',function(){if(loopI<4){loopI++;drawLoop()}});
+$('#loopReset').addEventListener('click',function(){loopI=-1;drawLoop()});
+onSeg('who',function(v){if(v==='agent'&&loopI<0){loopI=0;drawLoop()}});
+drawLoop();
+
+/* sort game */
+var SG=[
+ ['무엇을 만들지 정하기','h','내 가게 사정을 아는 사람만 정할 수 있습니다.'],
+ ['코드 작성하기','a','HTML, CSS, JavaScript 코드는 AI가 씁니다.'],
+ ['목적과 상황 설명하기','h','왜 필요한지, 누가 쓰는지는 사람이 알려 줘야 합니다.'],
+ ['오류 찾아서 고치기','a','오류 문구를 보여 주면 AI가 원인을 찾아 고칩니다.'],
+ ['결과가 쓸 만한지 판단하기','h','우리 손님에게 맞는지는 사람이 직접 눌러 보고 판단합니다.'],
+ ['화면 구조 짜기','a','어디에 무엇을 둘지 코드로 구성하는 일은 AI가 합니다.'],
+ ['방향 바꾸기','h','"더 단순하게"처럼 방향을 정하는 것은 사람입니다.'],
+ ['반복 작업 처리하기','a','똑같은 버튼 스무 개 만들기 같은 반복은 AI가 순식간에 합니다.']
+];
+var sgAns={};
+function drawSG(){
+  var ok=0;
+  $('#sglist').innerHTML=SG.map(function(it,i){
+    var a=sgAns[i],fb='';
+    if(a){var right=a===it[1];if(right)ok++;fb=(right?'<span class="badge b-good">맞아요</span>':'<span class="badge b-warn">다시 생각해 보세요</span>')+'<span>'+(right?esc(it[2]):'힌트: '+(it[1]==='h'?'의도와 판단에 관한 일입니다.':'코드로 실행하는 일입니다.'))+'</span>'}
+    return '<div class="sgi"><span class="tx">'+esc(it[0])+'</span><span class="bt"><button type="button" data-sg="'+i+'" data-a="h" aria-pressed="'+(a==='h')+'">사람</button><button type="button" data-sg="'+i+'" data-a="a" aria-pressed="'+(a==='a')+'">AI</button></span><div class="fb">'+fb+'</div></div>';
+  }).join('');
+  $('#sgScore').textContent=ok+' / '+SG.length;
+}
+$('#sglist').addEventListener('click',function(e){var b=e.target.closest('[data-sg]');if(!b)return;sgAns[b.dataset.sg]=b.dataset.a;drawSG()});
+drawSG();
+
+/* expectation quiz */
+var QZ=[
+ ['메뉴별 원가와 마진을 계산해 주는 계산기 만들기','ok','하나의 목적을 가진 작은 계산 도구는 바이브코딩이 가장 잘하는 일입니다.'],
+ ['손님 이름과 전화번호가 담긴 엑셀을 통째로 붙여 넣고 정리 부탁하기','no','손님 개인정보는 AI 대화창에 넣지 않습니다. 이름과 번호를 가린 예시 데이터로 만들어 보세요.'],
+ ['이벤트 응모자 중 당첨자를 뽑는 추첨 화면 만들기','ok','화면 하나로 끝나는 도구라 바로 만들 수 있습니다.'],
+ ['카드 결제와 회원가입까지 되는 온라인 쇼핑몰 만들기','no','결제와 회원 정보에는 서버, 데이터베이스, 보안이 필요합니다. 처음에는 피합니다.'],
+ ['AI가 계산한 매출 합계를 확인 없이 그대로 세무 자료로 쓰기','no','AI는 그럴듯한 오류를 낼 수 있습니다. 숫자는 반드시 직접 검증합니다.'],
+ ['가게 소개와 영업시간을 보여 주는 한 장짜리 안내 페이지','ok','간단한 웹페이지는 가장 쉬운 1단계입니다.']
+];
+var qAns={};
+function drawQZ(){
+  $('#qlist').innerHTML=QZ.map(function(it,i){
+    var a=qAns[i],fb='';
+    if(a){var right=a===it[1];fb=(right?'<span class="badge b-good">정답</span>':'<span class="badge b-warn">'+(it[1]==='ok'?'해도 좋아요':'조심해야 해요')+'</span>')+'<span>'+esc(it[2])+'</span>'}
+    return '<div class="qi"><p class="tx">'+esc(it[0])+'</p><div class="bt"><button type="button" data-q="'+i+'" data-a="ok" aria-pressed="'+(a==='ok')+'">해도 좋아요</button><button type="button" data-q="'+i+'" data-a="no" aria-pressed="'+(a==='no')+'">조심해야 해요</button></div><div class="fb">'+fb+'</div></div>';
+  }).join('');
+}
+$('#qlist').addEventListener('click',function(e){var b=e.target.closest('[data-q]');if(!b)return;qAns[b.dataset.q]=b.dataset.a;drawQZ()});
+drawQZ();
+
+/* ERRC */
+var EX={
+ cafe:['매일 아침 재고를 종이에 적는 일 → <b>재고 입력 화면</b>으로 자동 정리','신메뉴 소개 문구 쓰는 시간 → <b>AI 초안</b>으로 단축','단골손님 취향 파악 → <b>주문 기록 분석</b>으로 맞춤 추천','처음 해 보는 일 → <b>우리 가게 전용 주문 웹앱</b>'],
+ food:['예약 전화를 받아 노트에 옮겨 적는 일 → <b>예약 접수 화면</b>으로 대체','식자재 발주량 계산 → <b>발주 계산기</b>로 단축','메뉴별 원가와 마진 관리 → <b>원가 계산기</b>로 더 정확하게','처음 해 보는 일 → <b>외국어 메뉴판 웹앱</b>'],
+ hair:['시술 후 안내 문자를 하나하나 쓰는 일 → <b>문구 생성기</b>로 대체','예약 일정 조율 → <b>빈 시간 보여 주는 화면</b>으로 단축','고객별 시술 기록 관리 → <b>기록 카드</b>로 더 꼼꼼하게','처음 해 보는 일 → <b>헤어 스타일 추천 퀴즈 페이지</b>'],
+ shop:['주문 내역을 엑셀에 옮겨 적는 일 → <b>주문 정리 화면</b>으로 대체','상품 상세 설명 쓰기 → <b>AI 초안</b>으로 단축','클래스 수강생 관리 → <b>수강생 출석판</b>으로 더 체계적으로','처음 해 보는 일 → <b>맞춤 제작 견적 계산기</b>'],
+ etc:['매번 손으로 옮겨 적고 정리하는 일 → <b>입력 화면</b>으로 자동 정리','글쓰기·계산처럼 오래 걸리는 일 → <b>AI 초안·계산기</b>로 단축','손님·거래처 기록 관리 → <b>기록 카드</b>로 더 꼼꼼하게','해 보고 싶었지만 못 했던 일 → <b>내 업종 전용 작은 웹앱</b>']
+};
+function drawEX(v){$$('.ex').forEach(function(p){p.innerHTML='예시 · '+EX[v][+p.dataset.ex]})}
+onSeg('biz',drawEX);drawEX(segVal.biz||'cafe');
+[0,1,2,3].forEach(function(i){var t=$('#errc'+i);var s=store.get('vibe-errc-'+i);if(s)t.value=s;t.addEventListener('input',function(){store.set('vibe-errc-'+i,t.value)})});
+$('#errcCopy').addEventListener('click',function(){
+  var L=['없앨 일(E)','줄일 일(R)','더 잘할 일(R)','새로 시작할 일(C)'];
+  var txt=[0,1,2,3].map(function(i){return L[i]+': '+($('#errc'+i).value.trim()||'-')}).join('\n');
+  copyText(txt);
+});
+
+/* web playground */
+var stamps=3;
+function drawStamps(){var h='';for(var i=0;i<10;i++)h+='<i class="'+(i<stamps?'on':'')+'">'+(i<stamps?'●':'○')+'</i>';$('#scStamps').innerHTML=h}
+var CODE={
+ h:'<span class="c">&lt;!-- HTML · 뼈대 --&gt;</span>\n&lt;div class="card"&gt;\n  &lt;p&gt;동네 카페&lt;/p&gt;\n  &lt;h3&gt;달빛 커피&lt;/h3&gt;\n  &lt;p&gt;오늘의 원두: 에티오피아 예가체프&lt;/p&gt;\n  &lt;button&gt;스탬프 찍기&lt;/button&gt;\n&lt;/div&gt;',
+ c:'\n\n<span class="c">/* CSS · 인테리어 */</span>\n.card   { border-radius: 18px; padding: 28px; }\nh3      { font-size: 38px; }\nbutton  { background: #0066cc; color: white;\n          border-radius: 999px; }',
+ j:'\n\n<span class="c">// JavaScript · 두뇌</span>\nbutton.onclick = function () {\n  stamps = stamps + 1;\n  showStamps(stamps);\n};'
+};
+function setLayer(v){
+  var n=+v,card=$('#shopcard');card.dataset.layer=v;card.classList.toggle('raw',n<2);
+  $('#codeView').innerHTML=CODE.h+(n>=2?CODE.c:'')+(n>=3?CODE.j:'');
+  $('#codeLabel').textContent=['','HTML','HTML + CSS','HTML + CSS + JavaScript'][n]+' 코드';
+  $('#scMsg').textContent='';
+}
+onSeg('layer',setLayer);setLayer(segVal.layer||'3');drawStamps();
+$('#scBtn').addEventListener('click',function(){
+  if(+$('#shopcard').dataset.layer<3){toast('JavaScript가 없으면 버튼을 눌러도 아무 일도 일어나지 않습니다.');return}
+  stamps=stamps>=10?1:stamps+1;drawStamps();
+  $('#scMsg').textContent=stamps>=10?'도장 10개 완성! 음료 한 잔 무료입니다.':'도장 '+stamps+'개째입니다.';
+});
+
+/* data flow */
+var FLOW=[[0,"손님이 화면에서 '아메리카노 2잔'을 누릅니다."],[1,'웨이터(API)가 주문서를 들고 주방으로 갑니다.'],[2,'주방(백엔드)이 가격을 계산하고 주문 번호를 만듭니다.'],[3,'창고(데이터베이스)에서 원두를 꺼내고, 남은 재고를 기록합니다.'],[2,'주방이 음료를 완성합니다.'],[1,'웨이터가 완성된 주문을 들고 홀로 돌아옵니다.'],[0,"화면에 '주문 번호 17번 · 9,000원'이 표시됩니다."]];
+var flowT=null,reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function flowStep(k){
+  var st=FLOW[k][0];
+  $$('.sta').forEach(function(s){s.classList.toggle('cur',+s.dataset.i===st)});
+  var tok=$('#tok');tok.classList.add('go');tok.style.left=(st/3*100)+'%';
+  $('#flowCap').textContent=FLOW[k][1];
+}
+$('#flowGo').addEventListener('click',function(){
+  clearInterval(flowT);var k=0;flowStep(0);var btn=this;btn.disabled=true;
+  flowT=setInterval(function(){k++;if(k>=FLOW.length){clearInterval(flowT);btn.disabled=false;btn.textContent='한 번 더 보기';return}flowStep(k)},reduce?2200:1700);
+});
+
+/* level ladder */
+var LV=[
+ {n:5,nm:'상용 서비스',r:[1,1,1],ex:'회원가입과 결제가 있는 서비스',shop:'포인트 적립과 결제가 되는 온라인몰',note:'서버, 보안, 결제까지 다뤄야 하는 가장 큰 단계입니다.'},
+ {n:4,nm:'실시간 협업 앱',r:[1,1,1],ex:'사내 칸반보드',shop:'직원 여럿이 동시에 보는 근무표·업무판',note:'여러 사람이 동시에 같은 데이터를 고칩니다.'},
+ {n:3,nm:'데이터 저장 도구',r:[1,1,1],ex:'구글 시트와 연결된 기록 도구',shop:'예약 내용이 시트에 쌓이는 예약 장부',note:'입력한 내용이 사라지지 않고 어딘가에 저장됩니다.'},
+ {n:2,nm:'맞춤형 AI 봇',r:[1,1,0],ex:'맞춤형 챗봇, 요약기',shop:'손님 문의에 답장 초안을 써 주는 봇',note:'웹페이지에 AI와 대화하는 API를 붙이면 2단계가 됩니다.',now:1},
+ {n:1,nm:'간단한 웹페이지',r:[1,0,0],ex:'단독 화면, 단일 기능',shop:'여행 경비 계산기, 우리 가게 주문 웹앱',note:'이번 실습 두 가지가 모두 여기에 속합니다. 바로 실행되고 서버가 필요 없습니다.',now:1}
+];
+var lvSel=1;
+function drawLV(){
+  $('#lsteps').innerHTML=LV.map(function(l){return '<button type="button" data-lv="'+l.n+'" aria-pressed="'+(l.n===lvSel)+'"><b>Level '+l.n+'</b><span class="nm">'+l.nm+'</span>'+(l.now?'<span class="badge b-blue">이번 과정</span>':'')+'</button>'}).join('');
+  var l=LV.filter(function(x){return x.n===lvSel})[0],R=['HTML · CSS · JS','API 연결','DB · 백엔드'];
+  $('#ldetail').innerHTML='<span class="kicker">Level '+l.n+'</span><h3>'+l.nm+'</h3><div class="reqs">'+R.map(function(t,i){return '<span class="badge '+(l.r[i]?'b-good':'off')+'">'+(l.r[i]?'✓ ':'')+t+'</span>'}).join('')+'</div><div class="setlist"><div><span>대표 예시</span><span>'+l.ex+'</span></div><div><span>우리 가게라면</span><span>'+l.shop+'</span></div></div><p class="note">'+l.note+'</p>';
+}
+$('#lsteps').addEventListener('click',function(e){var b=e.target.closest('[data-lv]');if(!b)return;lvSel=+b.dataset.lv;drawLV()});
+drawLV();
+
+/* PRD builder */
+function chipGroup(sel,cb){$(sel).addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;$$('.chip',$(sel)).forEach(function(c){c.setAttribute('aria-pressed',String(c===b))});cb()})}
+var WHAT={'웹앱':'웹앱','위젯':'웹페이지 한쪽에 붙는 작은 위젯','챗봇':'대화형 챗봇 화면'};
+function drawPRD(){
+  var keys=$('#prdKey').value.split('\n').map(function(s){return s.trim()}).filter(Boolean).slice(0,3);
+  var vibe=($('#prdVibe .chip[aria-pressed="true"]')||{}).textContent||'';
+  var w=WHAT[segVal.prdWhat||'웹앱'];
+  $('#prdOut').textContent='당신은 비개발자를 위한 업무 도구 제작 도우미입니다.\n목표는 아래 문제를 해결하는 '+eul(w)+' 만드는 것입니다.\n\n# 문제 (Why)\n'+endDot($('#prdWhy').value||'[업무 문제]')+'\n\n# 사용자 (Target)\n'+($('#prdUser').value.trim()||'[사용자 유형]')+'\n\n# 필수 기능 (Key Action)\n'+(keys.length?keys.map(function(k){return '- '+k}).join('\n'):'- [필수 기능]')+'\n\n# 분위기 (Vibe)\n'+vibe+' 느낌으로 디자인해 주세요.\n\n# 출력 형식\n하나의 HTML 파일 안에 HTML, CSS, JavaScript를 모두 담아 주세요.';
+}
+['#prdWhy','#prdUser','#prdKey'].forEach(function(s){$(s).addEventListener('input',drawPRD)});
+chipGroup('#prdVibe',drawPRD);onSeg('prdWhat',drawPRD);drawPRD();
+
+/* lab 1 */
+var L1STYLE={pop:'두꺼운 검은색 윤곽선이 특징인 팝아트(Pop Art) 스타일',min:'흰 바탕과 넉넉한 여백, 얇은 선으로 정리한 미니멀 스타일',retro:'8비트 픽셀 게임 화면 같은 레트로 게임 스타일',ticket:'실제 항공권처럼 생긴 티켓 디자인 스타일'};
+var L1MOD=['통화(원, 달러, 엔, 유로)를 고를 수 있게 하고, 고정 환율로 원화 환산 금액도 함께 보여 주세요.','계산 결과를 실제 영수증 모양으로 출력해 주세요.','여행 경비 대신 단체 회식비 정산으로 바꿔 주세요. 항목은 음식, 음료, 장소 대관입니다.','사람마다 부담 비율을 다르게 정하는 차등 정산과, 목표 예산 대비 남은 금액도 보여 주세요.'];
+function drawL1(){
+  var mods=$$('#l1mods .chip').filter(function(c){return c.getAttribute('aria-pressed')==='true'}).map(function(c){return L1MOD[+c.dataset.m]});
+  $('#l1Out').textContent='# 역할\n당신은 UX/UI 디자인 감각을 갖춘 프론트엔드 웹 개발 전문가입니다.\n\n# 목표\n항공, 숙소, 식비를 입력하여 1인당 금액과 총비용을 한눈에 계산해 주는 여행 경비 계산기 웹앱을 제작해 주세요.\n\n# 입력\n인원수, 항공료, 숙박비, 식비 (숫자 입력 형식)\n\n# 출력\n총 경비, 1인당 부담 경비, 항목별 비율(비중) 시각화\n\n# 톤\n직관적이고 시각적으로 명확하며, 여행의 즐거움을 주는 경쾌한 스타일\n\n# 디자인 스타일\n'+L1STYLE[segVal.l1style||'pop']+(mods.length?'\n\n# 추가 요청\n'+mods.map(function(m){return '- '+m}).join('\n'):'')+'\n\n# 형식\n하나의 HTML 파일 안에 HTML, CSS, JavaScript를 모두 담아 주세요.';
+}
+$('#l1mods').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));drawL1()});
+onSeg('l1style',drawL1);drawL1();
+
+/* travel calc demo */
+var won=function(n){return Math.round(n).toLocaleString('ko-KR')+'원'};
+function drawTC(){
+  var n=Math.max(1,+$('#tcN').value||1),a=Math.max(0,+$('#tcA').value||0),h=Math.max(0,+$('#tcH').value||0),f=Math.max(0,+$('#tcF').value||0),t=a+h+f;
+  $('#tcTot').textContent=won(t);$('#tcPer').textContent=won(t/n);
+  var p=[a,h,f].map(function(x){return t?x/t*100:0});
+  $$('#tcBar i').forEach(function(el,i){el.style.width=p[i]+'%'});
+  var C=['var(--btn)','var(--star)','var(--good)'],N=['항공','숙박','식비'];
+  $('#tcLeg').innerHTML=N.map(function(nm,i){return '<span style="--c:'+C[i]+'">'+nm+' '+Math.round(p[i])+'%</span>'}).join('');
+}
+$('#tcForm').addEventListener('input',drawTC);$('#tcForm').addEventListener('submit',function(e){e.preventDefault()});drawTC();
+
+/* symptoms */
+var SYM=[
+ ['화면이 안 보여요','새로고침(F5)을 누르기 전에 미리보기 창이 열려 있는지 먼저 확인하세요. Claude는 아티팩트, ChatGPT는 캔버스, Gemini는 코드 미리보기 창입니다.','방금 작성한 코드를 다시 실행해서 미리보기 화면으로 보여 줘.'],
+ ['화면이 깨져 보여요','꾸밈이 많을수록 깨지기 쉽습니다. 디자인을 줄이고 동작부터 맞춘 뒤 다시 꾸밉니다.','스타일을 최소화하고 기본 동작 위주로 다시 만들어 줘. 디자인은 동작이 확인된 다음에 다시 입히자.'],
+ ['코드가 중간에 끊겼어요','답변이 너무 길면 중간에 멈춥니다. 이어 쓰게 하기보다 전체를 다시 받는 편이 안전합니다.','코드가 중간에 끊겼어. 끊긴 부분부터 이어 쓰지 말고, 전체 코드를 처음부터 하나의 HTML 파일로 다시 작성해 줘. 설명은 생략하고 코드만 보여 줘.'],
+ ['버튼을 눌러도 반응이 없어요','어떤 버튼을 눌렀는지, 무엇을 기대했는지, 실제로 어떻게 되었는지 세 가지를 함께 알려 주세요.',"'주문하기' 버튼을 누르면 장바구니에 메뉴가 담겨야 하는데, 지금은 아무 반응이 없어. 원인을 찾아서 고쳐 줘."],
+ ['오류 메시지가 떠요','빨간 오류 문구를 그대로 복사하거나 화면을 캡처해 AI에게 보여 주세요. 내용을 이해하지 못해도 괜찮습니다.','아래 오류 메시지가 나왔어. 원인을 쉽게 설명하고, 고친 전체 코드를 다시 보여 줘.\n\n[여기에 오류 메시지 붙여넣기]'],
+ ['기능이 꼬였어요','처음부터 다시 만들기보다 방금 버전에서 문제 되는 기능만 빼는 것이 빠릅니다.','방금 만든 버전에서 [불필요한 기능 이름]만 깔끔하게 제거해 줘. 나머지 기능은 그대로 유지해 줘.'],
+ ['화면이 너무 복잡해요','손님 입장에서 다시 보게 하면 무엇을 줄일지 보입니다.','실제 우리 매장 손님이 이 화면을 처음 봤을 때 가장 헷갈릴 부분 세 가지를 알려 주고, 그 부분을 더 쉽게 고쳐 줘.'],
+ ['원하는 게 안 나와요','프롬프트가 너무 짧을 수 있습니다. 누가, 무엇을 고르고, 버튼을 누르면 어떤 결과가 나와야 하는지 채워 보세요.','[누가] 이 화면에서 [무엇을] 고르고, [어떤 버튼]을 누르면 [어떤 결과]가 나오도록 만들어 줘.']
+];
+var symSel=0;
+function drawSym(){
+  $('#symptoms').innerHTML=SYM.map(function(s,i){return '<button type="button" data-sym="'+i+'" aria-pressed="'+(i===symSel)+'">'+esc(s[0])+'</button>'}).join('');
+  $('#symTip').textContent=SYM[symSel][1];$('#symSay').textContent=SYM[symSel][2];
+}
+$('#symptoms').addEventListener('click',function(e){var b=e.target.closest('[data-sym]');if(!b)return;symSel=+b.dataset.sym;drawSym()});
+drawSym();
+
+/* lab 2 */
+var BIZ={
+ cafe:{k:'카페',name:'달빛 커피',menu:'아메리카노 4,500\n카페라테 5,000\n바닐라 라테 5,500\n말차 라테 5,800\n크루아상 3,800',opt:'HOT/ICE, 사이즈, 샷 추가'},
+ burger:{k:'수제 버거집',name:'골목 버거',menu:'클래식 치즈버거 8,900\n베이컨 더블버거 11,500\n감자튀김 3,500\n콜라 2,000',opt:'세트 변경, 패티 추가, 소스 선택'},
+ snack:{k:'분식집',name:'엄마손 분식',menu:'떡볶이 4,500\n순대 4,000\n모둠 튀김 5,000\n김밥 3,500',opt:'맵기 단계, 곱빼기, 포장 여부'},
+ cinema:{k:'영화관 매점',name:'시네마 스낵바',menu:'팝콘(M) 5,500\n팝콘(L) 6,500\n나초 5,000\n탄산음료 3,000',opt:'맛 선택(고소/달콤/반반), 사이즈, 얼음 양'},
+ etc:{k:'우리 가게',name:'우리 가게',menu:'대표 상품 A 10,000\n대표 상품 B 15,000\n서비스 C 20,000',opt:'수량, 요청사항, 수령 방법'}
+};
+var TONE={trend:['트렌디하고 세련되었으며, 이용 과정이 직관적이고 흥미로운 스타일','무엇을 주문하시겠어요?'],kind:['친절함이 넘치는 동네 사장님 말투. 손님을 반갑게 맞이하고 메뉴를 다정하게 추천하는 문구를 사용','어서 오세요! 오늘은 뭐 드릴까요?'],jumak:["조선시대 주막 주모 말투. '어서 오시오, 무엇을 드시겠소?'처럼 옛말투로 안내",'어서 오시오, 무엇을 드시겠소?']};
+var HOW={menu:'메뉴판에서 메뉴 선택',quiz:'단계별 질문(예: 따뜻한 것? 시원한 것? 달콤한 것?)에 답하며 메뉴 고르기'};
+var OUT={receipt:'최종 주문 내역서 화면',ticket:'주문 대기 번호표가 발행되는 화면',anim:'주문 접수 → 준비 중 → 완료가 단계별 애니메이션으로 보이는 화면'};
+var STY={pop:'과감한 컬러 대비, 말풍선 요소, 만화적 그래픽 느낌의 팝아트(Pop Art) 스타일',min:'흰 바탕과 넉넉한 여백의 깔끔한 미니멀 스타일',hand:'크라프트지 질감과 손글씨 느낌 글꼴의 따뜻한 동네 가게 스타일',dark:'어두운 배경에 메뉴가 돋보이는 다크 모던 스타일'};
+function loadBiz(v){var b=BIZ[v];$('#l2EtcWrap').hidden=v!=='etc';$('#l2Name').value=b.name;$('#l2Menu').value=b.menu;$('#l2Opt').value=b.opt;drawL2()}
+function parseMenu(t){return t.split('\n').map(function(s){return s.trim()}).filter(Boolean).map(function(s){var m=s.match(/^(.*?)[\s:·-]*([\d,]+)\s*원?$/);return m?[m[1].trim(),m[2]]:[s,'']})}
+function drawL2(){
+  var b0=BIZ[segVal.l2biz||'cafe'],b={k:(segVal.l2biz==='etc'?($('#l2Etc').value.trim()||'우리 가게'):b0.k)},name=$('#l2Name').value.trim()||'우리 가게',menu=parseMenu($('#l2Menu').value),opt=$('#l2Opt').value.trim()||'옵션 없음',tone=TONE[segVal.l2tone||'trend'];
+  $('#l2Out').textContent='# 역할\n당신은 풀스택 웹 개발자이자 서비스 기획자입니다.\n\n# 목표\n\''+name+'\'의 메뉴 선택 페이지와 주문 내역 확정 페이지로 구성된 인터랙티브 '+b.k+' 주문 웹앱을 제작해 주세요.\n\n# 가게 정보\n- 가게 이름: '+name+'\n- 업종: '+b.k+'\n- 메뉴와 가격:\n'+(menu.length?menu.map(function(m){return '  · '+m[0]+(m[1]?' '+m[1]+'원':'')}).join('\n'):'  · [메뉴를 적어 주세요]')+'\n\n# 입력\n'+HOW[segVal.l2how||'menu']+', 옵션 선택('+opt+'), \'주문하기\' 버튼 클릭\n\n# 출력\n선택한 메뉴와 옵션이 반영된 장바구니(Cart)와 '+OUT[segVal.l2out||'receipt']+'\n\n# 톤\n'+tone[0]+'\n\n# 디자인 스타일\n'+STY[segVal.l2style||'pop']+'\n\n# 형식\n하나의 HTML 파일 안에 HTML, CSS, JavaScript를 모두 담아 주세요. 실제 결제나 서버 연결은 하지 않습니다.';
+  $('#pvName').textContent=name;$('#pvGreet').textContent=tone[1];
+  $('#pvMenu').innerHTML=menu.slice(0,4).map(function(m){return '<div><span>'+esc(m[0])+'</span><span>'+(m[1]?esc(m[1])+'원':'')+'</span></div>'}).join('');
+}
+onSeg('l2biz',loadBiz);['l2tone','l2how','l2out','l2style'].forEach(function(n){onSeg(n,drawL2)});
+$('#l2Form').addEventListener('input',drawL2);loadBiz('cafe');
+
+/* checklist */
+function drawCk(){var n=$$('#checks input:checked').length;$('#ckCount').textContent=n+' / 4';$$('#checks label').forEach(function(l){l.querySelector('b').classList.toggle('done',l.querySelector('input').checked)})}
+$('#checks').addEventListener('change',drawCk);drawCk();
+
+/* apply */
+var JOBS=[
+ ['인사·채용',[['채용 공고문 초안 작성기','아르바이트생을 뽑으려는 사장님','업무 내용·근무 시간·시급을 입력하면 공고문 초안 만들기, 문구 복사 버튼'],['신규 직원 첫 주 체크리스트','새로 온 직원','첫 주에 배울 일 목록, 완료 체크, 진행률 표시'],['동료 칭찬 카드 모음판','함께 일하는 직원들','칭찬·건의 카드 남기기, 이름 없이 모아 보기, 주간 모아 보기']]],
+ ['영업·고객',[['상담 고객 관리 장부','단체 주문·대관 문의를 받는 사장님','문의 고객 등록, 상담 단계(문의·견적·확정) 표시, 다음 연락일 표시'],['견적서 자동 작성기','단체 주문 손님에게 견적을 보내는 사장님','품목·수량 입력, 합계와 부가세 계산, 견적서 모양으로 출력'],['매출 실적 대시보드','매출을 한눈에 보고 싶은 사장님','일별 매출 입력, 주간 합계와 그래프, 지난주 대비 증감 표시']]],
+ ['마케팅·홍보',[['SNS 게시 캘린더','가게 SNS를 직접 운영하는 사장님','날짜별 게시 계획 등록, 채널(인스타그램·블로그) 구분, 이번 주 게시물 보기'],['이벤트 성과 계산기','할인 이벤트를 고민하는 사장님','이벤트 비용·추가 매출 입력, 투자 대비 수익(ROI) 계산, 손익 결과 표시'],['감사 메시지 문구 생성기','이벤트에 참여한 손님에게 인사하고 싶은 사장님','이벤트 이름·손님 유형 선택, 감사 문구 세 가지 제안, 복사 버튼']]],
+ ['기획',[['신메뉴 기획 정리판','신메뉴를 준비하는 사장님','아이디어 등록, 재료·원가 메모, 진행 상태(구상·시식·출시) 표시'],['오픈 준비 일정표','새 지점이나 리뉴얼을 준비하는 사장님','할 일과 마감일 등록, 간트차트 형태 일정 보기, 늦어진 항목 강조'],['손님 의견 모음판','손님 의견을 모아 개선하고 싶은 사장님','의견 등록, 주제별 분류, 많이 나온 의견 순으로 보기']]],
+ ['운영·CS',[['문의 접수·담당자 배정기','직원 여럿이 손님 문의를 나눠 받는 가게','문의 유형 선택, 유형별 담당자 자동 배정, 처리 상태 표시'],['자주 묻는 질문 모음집','손님 질문에 답하는 직원','질문 검색, 분류별 답변 보기, 새 질문 추가'],['비품 재고 관리 대장','비품과 재료를 관리하는 직원','품목·수량 입력, 부족한 품목 강조, 발주 목록 만들기']]]
+];
+$('#jobSeg').innerHTML=JOBS.map(function(j,i){return '<button type="button" data-v="'+i+'" aria-pressed="'+(i===0)+'">'+j[0]+'</button>'}).join('');
+segVal.job='0';var jobItem=0;
+function drawJob(){
+  var items=JOBS[+segVal.job][1];
+  $('#jobItems').innerHTML=items.map(function(it,i){return '<button type="button" data-ji="'+i+'" aria-pressed="'+(i===jobItem)+'">'+esc(it[0])+'</button>'}).join('');
+  var it=items[jobItem];
+  $('#jobOut').textContent='당신은 비개발자를 위한 업무 도구 제작 도우미입니다.\n목표는 \''+it[0]+'\''+(hasBatchim(it[0])?'을':'를')+' 만드는 것입니다.\n사용자는 '+it[1]+'이며, 필수 기능은 '+it[2]+'입니다.\n\n# 출력 형식\n하나의 HTML 파일(HTML, CSS, JavaScript 포함)로 된 단일 화면 웹앱으로 만들어 주세요.';
+}
+onSeg('job',function(){jobItem=0;drawJob()});
+$('#jobItems').addEventListener('click',function(e){var b=e.target.closest('[data-ji]');if(!b)return;jobItem=+b.dataset.ji;drawJob()});
+drawJob();
+
+/* share script */
+function drawSh(){
+  var a=$('#sh0').value.trim()||'[문제]',b=$('#sh1').value.trim()||'[만든 도구]',c=$('#sh2').value.trim()||'[적용 계획]';
+  $('#shOut').textContent='[문제] 저희 가게에는 이런 불편이 있었습니다. '+endDot(a)+'\n\n[만든 도구] 그래서 '+eul(b)+' 만들었습니다.\n\n[적용 계획] 앞으로 '+endDot(c);
+}
+$('#shForm').addEventListener('input',drawSh);drawSh();
+})();
+
+</script>
